@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Romantic Glow – Infinite Art Gallery</title>
+
+<style>
+/* --------------------------------------------------
+   GLOBAL STYLE
+-------------------------------------------------- */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background: radial-gradient(circle at top, #ffb79f, #2a0e12 70%);
+    overflow-x:hidden;
+    color:white;
+}
+
+/* --------------------------------------------------
+   FLOATING PARTICLES
+-------------------------------------------------- */
+.particle{
+    position:fixed;
+    width:10px;
+    height:10px;
+    background:rgba(255,180,150,0.7);
+    box-shadow:0 0 15px rgba(255,150,120,0.9);
+    border-radius:50%;
+    filter:blur(3px);
+    animation: drift 12s linear infinite;
+}
+
+@keyframes drift{
+    0%{transform:translateY(0) scale(1);}
+    100%{transform:translateY(-180vh) scale(0.4); opacity:0;}
+}
+
+/* --------------------------------------------------
+   TITLE
+-------------------------------------------------- */
+h1{
+    text-align:center;
+    margin:40px 0 20px;
+    font-size:3.2em;
+    color:#ffe2d3;
+    text-shadow:0 0 25px #ffb9a3;
+    animation: fadeDown 1s ease forwards;
+    opacity:0;
+}
+
+@keyframes fadeDown{
+    to{opacity:1; transform:translateY(0);}
+    from{opacity:0; transform:translateY(-25px);}
+}
+
+/* --------------------------------------------------
+   GALLERY GRID
+-------------------------------------------------- */
+.gallery{
+    column-count: 3;
+    column-gap:25px;
+    padding:20px 50px;
+}
+
+@media(max-width:1000px){ .gallery{column-count: 2;} }
+@media(max-width:600px){ .gallery{column-count: 1;} }
+
+/* --------------------------------------------------
+   ART IMAGE CARD
+-------------------------------------------------- */
+.art{
+    width:100%;
+    margin:0 0 25px;
+    border-radius:20px;
+    overflow:hidden;
+    break-inside:avoid;
+    position:relative;
+    opacity:0;
+    box-shadow:0 0 20px rgba(255,160,130,0.25);
+    animation: softAppear 1.2s ease forwards;
+}
+
+@keyframes softAppear{
+    0%{opacity:0; transform:translateY(40px);}
+    100%{opacity:1; transform:translateY(0);}
+}
+
+.art img{
+    width:100%;
+    display:block;
+    transition:0.4s ease;
+}
+
+.art:hover img{
+    transform:scale(1.05);
+    filter:brightness(1.2) saturate(1.12);
+}
+
+.art:hover{
+    box-shadow:0 0 40px rgba(255,160,130,0.55);
+}
+
+/* --------------------------------------------------
+   LIGHTBOX VIEWER
+-------------------------------------------------- */
+#lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    backdrop-filter:blur(6px);
+    z-index:999;
+}
+
+#lightbox img{
+    max-width:80%;
+    max-height:80%;
+    border-radius:20px;
+    box-shadow:0 0 40px rgba(255,160,130,0.7);
+    animation: zoomIn 0.4s ease;
+}
+
+@keyframes zoomIn{
+    from{transform:scale(0.6); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+#lightbox:active{
+    display:none;
+}
+</style>
+</head>
+<body>
+
+<h1>Romantic Glow Art Gallery</h1>
+
+<div class="gallery" id="gallery"></div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="this.style.display='none'">
+    <img id="lightbox-img">
+</div>
+
+<script>
+/* --------------------------------------------------
+   PARTICLE CREATION
+-------------------------------------------------- */
+for(let i=0;i<25;i++){
+    let p = document.createElement("div");
+    p.classList.add("particle");
+    p.style.left = Math.random()*100 + "vw";
+    p.style.top = Math.random()*100 + "vh";
+    p.style.animationDuration = (10 + Math.random()*10) + "s";
+    document.body.appendChild(p);
+}
+
+/* --------------------------------------------------
+   YOUR IMAGES
+-------------------------------------------------- */
+const images = [
+    "https://images.stockcake.com/public/0/5/2/052b06d2-51b0-458a-8028-43b10ad0aef9_large/sunset-floral-bloom-stockcake.jpg",
+    "https://thumbs.dreamstime.com/b/sunset-over-river-green-grass-dandelions-nature-calm-warm-light-sunset-over-river-green-grass-dandelions-387462615.jpg",
+    "https://img.freepik.com/free-photo/tiny-flower-plants-with-sunset-mountains_181624-3011.jpg?semt=ais_hybrid&w=740&q=80",
+    "https://i.pinimg.com/1200x/6f/66/9f/6f669f436acfb00f86260ae763696e53.jpg",
+    "https://i.pinimg.com/736x/79/e8/bf/79e8bfe5f14f4b27a280f78bbc0c3d34.jpg",
+    "https://i.pinimg.com/736x/96/4a/9c/964a9c3ca48fca5a4b994adc5dbecdf1.jpg"
+];
+
+/* --------------------------------------------------
+   LOAD IMAGES (INFINITE SCROLL)
+-------------------------------------------------- */
+let index = 0;
+
+function loadImages(count = 6){
+    const gallery = document.getElementById("gallery");
+
+    for(let i=0;i<count;i++){
+        let art = document.createElement("div");
+        art.className = "art";
+
+        let img = document.createElement("img");
+        img.src = images[index % images.length];
+        img.onclick = () => openLightbox(img.src);
+
+        art.appendChild(img);
+        gallery.appendChild(art);
+
+        index++;
+    }
+}
+
+function openLightbox(src){
+    document.getElementById("lightbox-img").src = src;
+    document.getElementById("lightbox").style.display = "flex";
+}
+
+/* Initial Load */
+loadImages();
+
+/* Infinite Scroll */
+window.addEventListener("scroll", () => {
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 800){
+        loadImages();
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Romantic Glow — Mega Gallery</title>
+<style>
+  :root{
+    --txt:#fff;
+    --muted: rgba(255,255,255,0.82);
+    --accent: #ffb67e;
+    --glass: rgba(255,255,255,0.04);
+    --card-radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue";}
+  html,body{height:100%;background:linear-gradient(180deg,#2a0e12,#1b0710);color:var(--txt);-webkit-font-smoothing:antialiased;overflow:hidden;}
+  .app{max-width:1300px;margin:20px auto;padding:18px;display:grid;grid-template-columns:320px 1fr;gap:20px;height:calc(100vh - 40px);}
+  @media(max-width:980px){ .app{grid-template-columns:1fr; height:auto; padding-bottom:60px;} }
+
+  /* SIDEBAR */
+  .side{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border-radius:14px;padding:14px;backdrop-filter:blur(8px);box-shadow:0 10px 40px rgba(0,0,0,0.6);height:100%;overflow:auto;}
+  .brand{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ffd6a3);display:flex;align-items:center;justify-content:center;color:#2b1206;font-weight:800}
+  h1{font-size:18px}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:4px}
+  .controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+
+  input[type="text"], select, input[type="color"]{width:100%;padding:10px;border-radius:10px;border:none;background:rgba(0,0,0,0.18);color:var(--txt)}
+  .row{display:flex;gap:8px;align-items:center}
+  .btn{background:linear-gradient(180deg,var(--accent),#ffbb86);border:none;padding:10px;border-radius:10px;font-weight:700;color:#2b1206;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--txt)}
+  .small{font-size:13px;color:var(--muted)}
+
+  /* MAIN */
+  .main{height:100%;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px}
+  .pill{background:var(--glass);padding:8px 12px;border-radius:999px;font-size:13px;color:var(--muted)}
+  .gallery-wrap{flex:1;overflow:auto;padding:0 18px 30px 18px}
+  .masonry{column-count:3;column-gap:18px}
+  @media(max-width:1100px){ .masonry{column-count:2} }
+  @media(max-width:600px){ .masonry{column-count:1} }
+
+  .card{break-inside:avoid;margin:0 0 18px;border-radius:var(--card-radius);overflow:hidden;position:relative;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 10px 36px rgba(0,0,0,0.6);transition:transform .28s,box-shadow .28s}
+  .card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(0,0,0,0.7)}
+  .card img{width:100%;display:block;transition:transform .6s ease,filter .3s ease}
+  .card:hover img{transform:scale(1.05);filter:brightness(1.08) saturate(1.05)}
+  .meta{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .meta .info{background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(255,255,255,0.02));padding:8px 10px;border-radius:10px;font-size:13px}
+  .icons{display:flex;gap:8px}
+
+  .fav-btn{width:40px;height:40px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .fav-btn.active{background:linear-gradient(180deg,#ffd7a8,#ffbb86);color:#2b1206}
+
+  /* LIGHTBOX */
+  .lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.85));z-index:999}
+  .lightbox.open{display:flex}
+  .lb-inner{width:90%;max-width:1100px;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(255,255,255,0.01));border-radius:12px;display:flex;gap:12px;overflow:hidden}
+  .lb-image{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+  .lb-image img{max-width:100%;max-height:80vh;border-radius:10px;box-shadow:0 18px 60px rgba(0,0,0,0.7)}
+  .lb-side{width:320px;padding:14px;display:flex;flex-direction:column;gap:10px}
+
+  .palette{display:flex;gap:8px;flex-wrap:wrap}
+  .sw{width:44px;height:44px;border-radius:8px;box-shadow:0 8px 14px rgba(0,0,0,0.4);cursor:pointer}
+
+  /* PARTICLES & TRAIL */
+  canvas#fx{position:fixed;left:0;top:0;pointer-events:none;z-index:5}
+  .controls-bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;display:flex;gap:8px;z-index:60}
+  .small-muted{font-size:12px;color:var(--muted)}
+
+  /* SCROLLBAR small style */
+  .gallery-wrap::-webkit-scrollbar{width:10px}
+  .gallery-wrap::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ffb88a,#ff8f6a);border-radius:999px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">RG</div>
+      <div>
+        <h1>Romantic Glow</h1>
+        <div class="subtitle">Warm-sunset infinite gallery — your images, your vibe</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div>
+        <label class="small">Search (tags)</label>
+        <input id="search" type="text" placeholder="e.g. sunset, floral, calm">
+      </div>
+
+      <div>
+        <label class="small">Theme</label>
+        <div class="row">
+          <button class="btn" data-theme="sunset">Sunset</button>
+          <button class="btn secondary" data-theme="rose">Rose</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Music & Sound</label>
+        <div class="row">
+          <button id="music" class="btn secondary">Play Music</button>
+          <div id="volWrap" style="flex:1"><input id="volume" type="range" min="0" max="100" value="30" style="width:100%"></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Favorites & Activity</label>
+        <div class="row">
+          <button id="exportFav" class="btn">Export Favorites</button>
+          <button id="importFav" class="btn secondary">Import</button>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button id="downloadLog" class="btn">Download Activity</button>
+          <button id="clearData" class="btn secondary">Clear Data</button>
+        </div>
+        <div style="margin-top:8px" class="small-muted">Activity & favorites saved in browser (localStorage). Use Export to save files to your PC.</div>
+      </div>
+
+      <div>
+        <label class="small">Gallery Snapshot</label>
+        <div class="row">
+          <button id="snapshot" class="btn">Download Snapshot (HTML)</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Display Options</label>
+        <div class="row">
+          <button id="toggleParticles" class="btn secondary">Toggle Particles</button>
+          <button id="toggleTrail" class="btn secondary">Toggle Cursor Trail</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Quick Tips</label>
+        <div class="small-muted">Click an image to open lightbox. Favorite with the star. Downloads will prompt your save location (choose your Desktop folder).</div>
+      </div>
+
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="pill">Romantic Glow Gallery</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="pill small-muted">Images loaded: <span id="count">0</span></div>
+        <div class="pill small-muted">Favorites: <span id="favCount">0</span></div>
+      </div>
+    </div>
+
+    <div class="gallery-wrap" id="gwrap">
+      <div id="masonry" class="masonry"></div>
+      <div id="loader" class="pill" style="text-align:center;margin:18px auto">Scroll to load more</div>
+    </div>
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" role="dialog" aria-hidden="true">
+  <div class="lb-inner">
+    <div class="lb-image"><img id="lbimg" src="" alt="Artwork"></div>
+    <div class="lb-side">
+      <div>
+        <div id="lbtitle" style="font-weight:800">Untitled</div>
+        <div id="lbmeta" class="small-muted">—</div>
+      </div>
+      <div>
+        <div class="small-muted">Palette</div>
+        <div class="palette" id="palette"></div>
+      </div>
+      <div style="margin-top:auto;display:flex;gap:8px">
+        <button id="lbFav" class="btn">Favorite</button>
+        <button id="lbDown" class="btn secondary">Download Image</button>
+        <button id="lbClose" class="btn secondary">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- canvas for FX -->
+<canvas id="fx"></canvas>
+
+<!-- bottom controls -->
+<div class="controls-bottom">
+  <div class="pill small-muted">Use arrows ← → in lightbox</div>
+</div>
+
+<script>
+/* ===========================
+   Configuration & Images
+   =========================== */
+const IMAGES = [
+  "https://images.stockcake.com/public/0/5/2/052b06d2-51b0-458a-8028-43b10ad0aef9_large/sunset-floral-bloom-stockcake.jpg",
+  "https://thumbs.dreamstime.com/b/sunset-over-river-green-grass-dandelions-nature-calm-warm-light-sunset-over-river-green-grass-dandelions-387462615.jpg",
+  "https://img.freepik.com/free-photo/tiny-flower-plants-with-sunset-mountains_181624-3011.jpg?semt=ais_hybrid&w=740&q=80",
+  "https://i.pinimg.com/1200x/6f/66/9f/6f669f436acfb00f86260ae763696e53.jpg",
+  "https://i.pinimg.com/736x/79/e8/bf/79e8bfe5f14f4b27a280f78bbc0c3d34.jpg",
+  "https://i.pinimg.com/736x/96/4a/9c/964a9c3ca48fca5a4b994adc5dbecdf1.jpg"
+];
+
+const STATE = {
+  idx: 0,
+  items: [],    // will hold objects {id,url,ts}
+  favorites: JSON.parse(localStorage.getItem("rg:favorites") || "{}"),
+  activity: JSON.parse(localStorage.getItem("rg:activity") || "[]"),
+  particles: true,
+  trail: true,
+  musicOn: false
+};
+
+/* small helpers */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+function uid(){ return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8); }
+function recordActivity(type, detail){ const ev = {ts: new Date().toISOString(), type, detail}; STATE.activity.push(ev); localStorage.setItem("rg:activity", JSON.stringify(STATE.activity)); }
+function saveFavorites(){ localStorage.setItem("rg:favorites", JSON.stringify(STATE.favorites)); updateFavCount(); }
+
+/* ===========================
+   Masonry / Infinite Loading
+   =========================== */
+const masonry = $("#masonry");
+const loader = $("#loader");
+const gwrap = $("#gwrap");
+const countEl = $("#count");
+const favCountEl = $("#favCount");
+
+function makeItem(url){
+  const id = uid();
+  const item = { id, url, ts: Date.now() };
+  STATE.items.push(item);
+  return item;
+}
+
+function appendCard(item){
+  const card = document.createElement("div"); card.className = "card"; card.dataset.id = item.id;
+  const img = document.createElement("img");
+  img.loading = "lazy";
+  img.decoding = "async";
+  img.src = item.url;
+  img.alt = "Romantic art";
+  img.addEventListener("click", ()=> openLightbox(item.id));
+  card.appendChild(img);
+
+  const meta = document.createElement("div"); meta.className = "meta";
+  const info = document.createElement("div"); info.className = "info"; info.textContent = new Date(item.ts).toLocaleString();
+  const icons = document.createElement("div"); icons.className = "icons";
+  const favBtn = document.createElement("button"); favBtn.className = "fav-btn"; favBtn.innerHTML = STATE.favorites[item.id] ? "★" : "☆";
+  if(STATE.favorites[item.id]) favBtn.classList.add("active");
+  favBtn.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    toggleFavorite(item, favBtn);
+  });
+  const openBtn = document.createElement("button"); openBtn.className = "fav-btn"; openBtn.innerHTML = "🔍";
+  openBtn.addEventListener("click", (e)=>{ e.stopPropagation(); openLightbox(item.id); });
+  icons.appendChild(favBtn); icons.appendChild(openBtn);
+  meta.appendChild(info); meta.appendChild(icons);
+  card.appendChild(meta);
+
+  masonry.appendChild(card);
+}
+
+function toggleFavorite(item, btn){
+  if(STATE.favorites[item.id]){
+    delete STATE.favorites[item.id];
+    btn.classList.remove("active"); btn.innerHTML = "☆";
+    recordActivity("unfavorite", {id:item.id, url:item.url});
+  } else {
+    STATE.favorites[item.id] = item;
+    btn.classList.add("active"); btn.innerHTML = "★";
+    recordActivity("favorite", {id:item.id, url:item.url});
+  }
+  saveFavorites();
+  renderFavoritesCount();
+}
+
+function renderFavoritesCount(){ favCountEl.textContent = Object.keys(STATE.favorites).length; }
+function updateCount(){ countEl.textContent = masonry.querySelectorAll(".card").length; }
+
+/* initial load: fill with a moderate number and then infinite cycle */
+function loadMore(n=6){
+  for(let i=0;i<n;i++){
+    const url = IMAGES[STATE.idx % IMAGES.length] + (IMAGES[STATE.idx % IMAGES.length].includes("?") ? "&v="+Math.random() : "?v="+Math.random());
+    const item = makeItem(url);
+    appendCard(item);
+    STATE.idx++;
+  }
+  updateCount();
+  recordActivity("load", {loaded:n, total:STATE.items.length});
+}
+
+/* infinite scroll using scroll container */
+gwrap.addEventListener("scroll", ()=> {
+  const scrollBottom = gwrap.scrollTop + gwrap.clientHeight;
+  if(scrollBottom > gwrap.scrollHeight - 600){
+    loadMore(4);
+  }
+});
+
+/* seed */
+loadMore(12);
+
+/* ===========================
+   Lightbox
+   =========================== */
+const lightbox = $("#lightbox"), lbimg = $("#lbimg"), lbtitle = $("#lbtitle"), lbmeta = $("#lbmeta"), paletteEl = $("#palette"), lbFav = $("#lbFav"), lbDown = $("#lbDown"), lbClose = $("#lbClose");
+let currentIndex = 0;
+
+function findIndexById(id){
+  return STATE.items.findIndex(it => it.id === id);
+}
+
+function openLightbox(id){
+  const idx = findIndexById(id);
+  if(idx === -1) return;
+  currentIndex = idx;
+  showCurrent();
+  lightbox.classList.add("open");
+  lightbox.setAttribute("aria-hidden","false");
+  recordActivity("view", {id: STATE.items[currentIndex].id, url: STATE.items[currentIndex].url});
+}
+
+function showCurrent(){
+  const it = STATE.items[currentIndex];
+  lbimg.src = it.url;
+  lbtitle.textContent = `Romantic • #${currentIndex+1}`;
+  lbmeta.textContent = new Date(it.ts).toLocaleString();
+  // palette sampled approximately using a canvas (best-effort)
+  extractPalette(it.url).then(p => {
+    paletteEl.innerHTML = "";
+    p.forEach(c => {
+      const d = document.createElement("div"); d.className = "sw"; d.style.background = c;
+      d.addEventListener("click", ()=> { document.body.style.background = `linear-gradient(180deg, ${c}, #1b0710)`; recordActivity("theme:color", c); });
+      paletteEl.appendChild(d);
+    });
+  }).catch(()=> paletteEl.innerHTML = "");
+  lbFav.textContent = STATE.favorites[it.id] ? "Unfavorite" : "Favorite";
+  lbFav.onclick = () => {
+    // simulate toggle
+    const btns = Array.from(document.querySelectorAll(".card")).find(c => c.dataset.id === it.id)?.querySelector(".fav-btn");
+    if(btns) toggleFavorite(it, btns);
+    lbFav.textContent = STATE.favorites[it.id] ? "Unfavorite" : "Favorite";
+  };
+  lbDown.onclick = ()=> downloadImage(it.url, `romantic-${currentIndex+1}.jpg`);
+}
+
+lbClose.addEventListener("click", ()=> { closeLightbox(); });
+lightbox.addEventListener("click", (e)=> { if(e.target === lightbox) closeLightbox(); });
+document.addEventListener("keydown", (e)=> {
+  if(lightbox.classList.contains("open")){
+    if(e.key === "Escape") closeLightbox();
+    if(e.key === "ArrowRight") { currentIndex = (currentIndex + 1) % STATE.items.length; showCurrent(); }
+    if(e.key === "ArrowLeft") { currentIndex = (currentIndex - 1 + STATE.items.length) % STATE.items.length; showCurrent(); }
+  }
+});
+
+function closeLightbox(){ lightbox.classList.remove("open"); lightbox.setAttribute("aria-hidden","true"); }
+
+/* ========== Palette extraction (best-effort) ========== */
+function extractPalette(url){
+  return new Promise((resolve, reject) => {
+    try{
+      const img = new Image(); img.crossOrigin = "anonymous"; img.src = url;
+      img.onload = () => {
+        const w = Math.min(120, img.width), h = Math.min(120, img.height);
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const ctx = c.getContext("2d"); ctx.drawImage(img,0,0,w,h);
+        const data = ctx.getImageData(0,0,w,h).data;
+        const map = {};
+        for(let i=0;i<data.length;i+=4*6){ // sample every 6th pixel for speed
+          const r=data[i], g=data[i+1], b=data[i+2];
+          const key = `${Math.round(r/16)*16},${Math.round(g/16)*16},${Math.round(b/16)*16}`;
+          map[key] = (map[key]||0)+1;
+        }
+        const arr = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(s=>{
+          const [r,g,b] = s[0].split(",");
+          return `rgb(${r},${g},${b})`;
+        });
+        resolve(arr.length ? arr : ['rgb(255,200,150)','rgb(200,150,130)']);
+      };
+      img.onerror = ()=> reject("err");
+    }catch(e){ reject(e); }
+  });
+}
+
+/* ========== Download helpers (favorites / activity / snapshot / image) ========== */
+function downloadJSON(obj, filename='data.json'){
+  const b = new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href=u; a.download = filename; document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(u);
+}
+function downloadText(text, filename='log.txt'){
+  const b = new Blob([text], {type:'text/plain'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href=u; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u);
+}
+function downloadImage(url, filename='image.jpg'){
+  fetch(url).then(r=>r.blob()).then(blob=>{
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u);
+    recordActivity("download_image",{url,filename});
+  }).catch(()=> alert("Download failed (CORS may block some hosts)."));
+}
+
+/* favorites export/import */
+$("#exportFav").addEventListener("click", ()=> {
+  downloadJSON(STATE.favorites, 'romantic-favorites.json');
+  recordActivity("export_favorites", {count: Object.keys(STATE.favorites).length});
+});
+
+$("#importFav").addEventListener("click", ()=> {
+  const f = document.createElement("input"); f.type="file"; f.accept=".json";
+  f.onchange = async ()=> {
+    const file = f.files[0]; if(!file) return;
+    const txt = await file.text();
+    try{
+      const obj = JSON.parse(txt);
+      STATE.favorites = {...STATE.favorites, ...obj};
+      saveFavorites(); renderFavoritesCount(); recordActivity("import_favorites",{count:Object.keys(obj).length});
+      alert("Imported favorites");
+    }catch(e){ alert("Invalid file"); }
+  };
+  f.click();
+});
+
+/* download activity log */
+$("#downloadLog").addEventListener("click", ()=> {
+  const json = STATE.activity;
+  downloadJSON(json, 'romantic-activity.json');
+  // also create CSV
+  const csv = ["timestamp,type,detail"].concat(json.map(e => {
+    return `${e.ts},${e.type},"${JSON.stringify(e.detail).replace(/"/g,'""')}"`;
+  })).join('\n');
+  downloadText(csv, 'romantic-activity.csv');
+  recordActivity("export_activity",{count: json.length});
+});
+
+/* clear data */
+$("#clearData").addEventListener("click", ()=> {
+  if(!confirm("Clear favorites and activity from this browser?")) return;
+  STATE.favorites = {}; STATE.activity = [];
+  localStorage.removeItem("rg:favorites"); localStorage.removeItem("rg:activity");
+  renderFavoritesCount(); recordActivity("clear_data", {});
+});
+
+/* snapshot HTML */
+$("#snapshot").addEventListener("click", ()=> {
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Romantic Snapshot</title></head><body style="background:#1b0710;color:#fff;padding:20px;font-family:sans-serif"><h2>Gallery Snapshot</h2>${STATE.items.map(i=>`<div style="margin:10px 0"><img src="${i.url}" style="max-width:400px"></div>`).join('')}</body></html>`;
+  const b = new Blob([html],{type:'text/html'}); const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href = u; a.download = 'romantic-snapshot.html'; a.click(); URL.revokeObjectURL(u);
+  recordActivity("download_snapshot", {count:STATE.items.length});
+});
+
+/* ===========================
+   Music (WebAudio simple ambient)
+   =========================== */
+let audioCtx=null, master=null, nodes=[];
+function ensureAudio(){
+  if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); master = audioCtx.createGain(); master.gain.value = 0.0001; master.connect(audioCtx.destination); master.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.8); }
+}
+function startMusic(){
+  ensureAudio(); stopMusic();
+  // two slow pads
+  const o1=audioCtx.createOscillator(); o1.type='sine'; o1.frequency.value=110;
+  const o2=audioCtx.createOscillator(); o2.type='sine'; o2.frequency.value=140;
+  const g=audioCtx.createGain(); g.gain.value=0.0001;
+  o1.connect(g); o2.connect(g); g.connect(master);
+  o1.start(); o2.start();
+  g.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 1.2);
+  nodes.push(o1,o2,g);
+  // gentle arp
+  const now = audioCtx.currentTime;
+  for(let i=0;i<6;i++){
+    const s=audioCtx.createOscillator(); s.type='triangle'; s.frequency.value = 220 + i*18;
+    const gg=audioCtx.createGain(); gg.gain.value = 0.0001;
+    s.connect(gg); gg.connect(master);
+    s.start(now + i*0.9);
+    gg.gain.linearRampToValueAtTime(0.06, now + i*0.9 + 0.04);
+    gg.gain.exponentialRampToValueAtTime(0.0002, now + i*0.9 + 0.7);
+    s.stop(now + i*0.9 + 1.1);
+    nodes.push(s);
+  }
+  STATE.musicOn = true;
+  $("#music").textContent = "Stop Music";
+  recordActivity("music", {action:"start"});
+}
+function stopMusic(){ nodes.forEach(n=>{ try{ n.stop(); }catch(e){} try{ n.disconnect(); }catch(e){} }); nodes=[]; STATE.musicOn=false; $("#music").textContent = "Play Music"; recordActivity("music",{action:"stop"}); }
+$("#music").addEventListener("click", async ()=>{
+  if(!audioCtx){ try{ await (new (window.AudioContext || window.webkitAudioContext)()).resume(); }catch(e){} }
+  if(STATE.musicOn) stopMusic(); else startMusic();
+});
+$("#volume").addEventListener("input", (e)=>{ const v = Number(e.target.value)/100; if(master) master.gain.setTargetAtTime(v*0.6, audioCtx.currentTime, 0.2); });
+
+/* ===========================
+   Canvas FX: particles + cursor trail
+   =========================== */
+const fx = $("#fx"); const fctx = fx.getContext("2d");
+let W=innerWidth, H=innerHeight, DPR = devicePixelRatio || 1;
+function resize(){ W = innerWidth; H = innerHeight; fx.width = W*DPR; fx.height = H*DPR; fx.style.width = W+'px'; fx.style.height = H+'px'; fctx.setTransform(DPR,0,0,DPR,0,0); }
+window.addEventListener('resize', resize); resize();
+
+let particles = [];
+function spawnParticle(x,y,dx,dy,sz,col){
+  particles.push({x,y,dx,dy,sz,col,life:80 + Math.random()*60});
+}
+for(let i=0;i<30;i++) spawnParticle(Math.random()*W, Math.random()*H, (Math.random()-0.5)*0.3, -0.2-Math.random()*0.6, 6+Math.random()*20, `rgba(255,180,140,${0.08+Math.random()*0.3})`);
+
+let trail = []; window.addEventListener("pointermove", (e)=> {
+  if(!STATE.trail) return;
+  trail.push({x:e.clientX, y:e.clientY, t:Date.now()});
+  if(trail.length > 40) trail.shift();
+  spawnParticle(e.clientX, e.clientY, (Math.random()-0.5)*0.6, -0.6, 4+Math.random()*8, 'rgba(255,200,150,0.28)');
+});
+
+function drawFx(){
+  fctx.clearRect(0,0,W,H);
+  // particles
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.x += p.dx; p.y += p.dy; p.life--;
+    const a = Math.max(0, p.life/140);
+    const g = fctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.sz);
+    g.addColorStop(0, p.col.replace(/[\d\.]+\)$/,'1)'));
+    g.addColorStop(1, p.col.replace(/[\d\.]+\)$/,'0)'));
+    fctx.fillStyle = g;
+    fctx.beginPath(); fctx.arc(p.x,p.y,p.sz,0,Math.PI*2); fctx.fill();
+    if(p.life <= 0) particles.splice(i,1);
+  }
+  // trail
+  if(STATE.trail){
+    for(let i=0;i<trail.length;i++){
+      const t = trail[i]; const age = (Date.now() - t.t)/600;
+      const sz = Math.max(1, 14*(1-age));
+      const opacity = Math.max(0, 0.35*(1-age));
+      fctx.fillStyle = `rgba(255,200,150,${opacity})`;
+      fctx.beginPath(); fctx.arc(t.x, t.y, sz,0,Math.PI*2); fctx.fill();
+    }
+  }
+  requestAnimationFrame(drawFx);
+}
+drawFx();
+
+/* controls toggles */
+$("#toggleParticles").addEventListener("click", ()=> { STATE.particles = !STATE.particles; if(!STATE.particles) particles=[]; recordActivity("toggle", {particles: STATE.particles}); });
+$("#toggleTrail").addEventListener("click", ()=> { STATE.trail = !STATE.trail; recordActivity("toggle", {trail: STATE.trail}); });
+
+/* ===========================
+   Utilities: search and theme
+   =========================== */
+$("#search").addEventListener("input", (e)=> {
+  const q = e.target.value.trim().toLowerCase();
+  // simple filter: hide cards not matching url or date
+  Array.from(masonry.children).forEach(card => {
+    const img = card.querySelector("img");
+    const ok = !q || img.src.toLowerCase().includes(q);
+    card.style.display = ok ? "" : "none";
+  });
+});
+
+$$("button[data-theme]").forEach(b => {
+  b.addEventListener("click", ()=> {
+    const t = b.dataset.theme;
+    if(t === "sunset") document.documentElement.style.background = "linear-gradient(180deg,#2a0e12,#1b0710)";
+    if(t === "rose") document.documentElement.style.background = "linear-gradient(180deg,#3b1220,#120615)";
+    recordActivity("theme", t);
+  });
+});
+
+/* ===========================
+   Metrics & helpers on load
+   =========================== */
+function renderFavoritesCount(){ favCountEl.textContent = Object.keys(STATE.favorites).length; saveFavorites(); }
+renderFavoritesCount();
+updateCount();
+
+/* ===========================
+   Download initial images into gallery (already done), but keep activity recording
+   =========================== */
+recordActivity("init", {images:IMAGES.length});
+
+/* ===========================
+   Download image when clicking (hook in lightbox)
+   =========================== */
+/* implemented above as downloadImage */
+
+/* ===========================
+   Utility: when user favorites via UI elsewhere (update underscores)
+   =========================== */
+function updateFavUI(){
+  // reflect favorites in card buttons
+  document.querySelectorAll(".card").forEach(card=>{
+    const id = card.dataset.id;
+    const btn = card.querySelector(".fav-btn");
+    if(STATE.favorites[id]) { btn.classList.add("active"); btn.innerHTML = "★"; }
+    else { btn.classList.remove("active"); btn.innerHTML = "☆"; }
+  });
+}
+setInterval(updateFavUI, 1200);
+
+/* ===========================
+   Save state on unload
+   =========================== */
+window.addEventListener("beforeunload", ()=> {
+  localStorage.setItem("rg:favorites", JSON.stringify(STATE.favorites));
+  localStorage.setItem("rg:activity", JSON.stringify(STATE.activity));
+});
+
+/* ===========================
+   Helper: small UI updates
+   =========================== */
+function updateFavCount(){ $("#favCount").textContent = Object.keys(STATE.favorites).length; }
+updateFavCount();
+
+/* ===========================
+   End of script
+   =========================== */
+console.info("Romantic Glow — Mega Gallery loaded. Use the Export buttons to save files to any folder you choose (e.g., your Desktop).");
+</script>
+</body>
+</html>
