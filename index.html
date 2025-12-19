@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoodScape - Advanced Mood-Based Web Experience</title>
+    <title>MoodScape Pro+ | Advanced Emotional Wellness Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -21,7 +22,6 @@
             --peace-blue: #118ab2;
             --energetic-pink: #ff4d8d;
             --reflective-teal: #06d6a0;
-            --glow-color: rgba(255, 209, 102, 0.7);
             --dark-bg: #0a0a0a;
             --card-bg: rgba(25, 25, 35, 0.92);
             --text-light: #f8f9fa;
@@ -36,59 +36,113 @@
             color: var(--text-light);
             min-height: 100vh;
             overflow-x: hidden;
-            transition: background-color 1.5s ease;
+            transition: background 1.5s ease;
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
         }
 
+        /* Header & Navigation */
         header {
-            text-align: center;
-            padding: 40px 20px;
+            padding: 20px 0;
             position: relative;
-            z-index: 10;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .logo {
             font-family: 'Quicksand', sans-serif;
-            font-size: 3.2rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            margin-bottom: 15px;
             background: linear-gradient(90deg, var(--warm-orange), var(--soft-yellow), var(--energetic-pink));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 30px rgba(255, 154, 60, 0.4);
             letter-spacing: 1px;
         }
 
-        .tagline {
-            font-size: 1.3rem;
-            color: var(--text-dim);
-            max-width: 700px;
-            margin: 0 auto 40px;
-            line-height: 1.5;
+        .streak-counter {
+            background: rgba(255, 154, 60, 0.15);
+            border-radius: 50px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 154, 60, 0.3);
         }
 
+        .streak-counter .fire {
+            color: var(--warm-orange);
+            animation: pulse 2s infinite;
+        }
+
+        /* Main Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mood Input Section - Enhanced */
         .mood-input-section {
             background: rgba(35, 35, 45, 0.7);
             border-radius: 20px;
             padding: 30px;
-            margin: 30px auto 40px;
-            max-width: 800px;
+            margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mood-input-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--warm-orange), var(--soft-yellow), var(--calm-purple));
         }
 
         .input-title {
             font-size: 1.5rem;
             margin-bottom: 20px;
             color: var(--soft-yellow);
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .mood-input-container {
@@ -97,1692 +151,1461 @@
             gap: 20px;
         }
 
-        .custom-mood-input {
+        .input-methods {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
-            justify-content: center;
         }
 
-        #customMoodInput {
-            flex-grow: 1;
-            min-width: 250px;
-            padding: 16px 20px;
+        .method-btn {
+            padding: 12px 24px;
             border-radius: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(20, 20, 30, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-light);
-            font-size: 1rem;
             font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        #customMoodInput:focus {
-            outline: none;
-            border-color: var(--warm-orange);
-            box-shadow: 0 0 20px rgba(255, 154, 60, 0.3);
-        }
-
-        .input-btn {
-            padding: 16px 30px;
-            border-radius: 50px;
-            border: none;
-            background: linear-gradient(90deg, var(--warm-orange), var(--cozy-red));
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .method-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .method-btn.active {
+            background: linear-gradient(90deg, var(--warm-orange), var(--cozy-red));
+            border-color: transparent;
+        }
+
+        /* 3D Visualizer */
+        .visualizer-container {
+            background: rgba(10, 10, 15, 0.6);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .visualizer-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--soft-yellow);
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 20px rgba(239, 71, 111, 0.3);
         }
 
-        .input-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(239, 71, 111, 0.4);
+        #mood3dCanvas {
+            width: 100%;
+            height: 300px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .mood-selector {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin: 40px 0 30px;
-        }
-
-        .mood-option {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
+        /* Sidebar Features */
+        .sidebar {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            background: var(--card-bg);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            gap: 25px;
         }
 
-        .mood-option:hover {
-            transform: translateY(-15px) scale(1.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .mood-option.active {
-            transform: translateY(-10px) scale(1.12);
-            border-color: var(--glow-color);
-            box-shadow: 0 0 40px var(--glow-color), 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .mood-icon {
-            font-size: 2.8rem;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .mood-name {
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-        }
-
-        .mood-intensity {
-            position: absolute;
-            bottom: 15px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .intensity-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .intensity-dot.active {
-            background: var(--text-light);
-            transform: scale(1.2);
-        }
-
-        .mood-description {
-            text-align: center;
-            max-width: 900px;
-            margin: 30px auto 60px;
-            font-size: 1.4rem;
-            line-height: 1.6;
-            padding: 0 20px;
-            min-height: 80px;
-            transition: all 0.5s ease;
-            font-weight: 500;
-        }
-
-        .experience-area {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 50px;
-            margin: 50px 0;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            min-height: 500px;
-            transition: var(--transition-slow);
+        .feature-card {
+            background: rgba(35, 35, 45, 0.7);
+            border-radius: 20px;
+            padding: 25px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .experience-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, var(--warm-orange), var(--soft-yellow), var(--calm-purple));
-            z-index: 1;
-        }
-
-        .experience-title {
-            font-size: 2.2rem;
-            margin-bottom: 30px;
-            color: var(--soft-yellow);
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .experience-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .visual-container {
-            flex: 1;
-            min-width: 350px;
-            height: 350px;
-            border-radius: 20px;
-            background: rgba(10, 10, 15, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .mood-visual {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9rem;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 20px currentColor);
-        }
-
-        .visual-effects {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-
-        .content-text {
-            flex: 2;
-            min-width: 350px;
-            padding: 25px;
-        }
-
-        .content-text h3 {
-            font-size: 1.8rem;
+        .feature-card h3 {
+            font-size: 1.2rem;
             margin-bottom: 20px;
-            color: var(--warm-orange);
-            font-weight: 700;
-        }
-
-        .content-text p {
-            line-height: 1.8;
-            color: var(--text-dim);
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
-
-        .mood-stats {
+            color: var(--soft-yellow);
             display: flex;
-            gap: 30px;
-            margin-top: 30px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
         }
 
-        .stat-item {
+        /* Sound Player */
+        .sound-player {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sound-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .sound-btn {
+            padding: 12px;
+            border-radius: 12px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            flex: 1;
-            min-width: 180px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 16px 32px;
-            border-radius: 50px;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.05rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: linear-gradient(90deg, var(--card-bg), rgba(40, 40, 50, 0.9));
-            color: var(--text-light);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(255, 154, 60, 0.2), rgba(157, 78, 221, 0.2));
-            transition: width 0.4s ease;
-            z-index: -1;
+        .sound-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .action-btn:hover::before {
+        .sound-btn.active {
+            background: var(--calm-purple);
+            border-color: transparent;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Mood Journal */
+        .journal-textarea {
             width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+            resize: vertical;
         }
 
-        .action-btn:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-
-        .action-btn i {
-            font-size: 1.3rem;
-        }
-
-        .mood-history {
+        /* Analytics Dashboard */
+        .analytics-dashboard {
             background: rgba(35, 35, 45, 0.7);
             border-radius: 20px;
             padding: 30px;
-            margin: 60px 0 40px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .history-title {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: var(--soft-yellow);
-            text-align: center;
-            font-weight: 700;
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
         }
 
-        .history-list {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 15px 10px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--warm-orange) rgba(255, 255, 255, 0.05);
-        }
-
-        .history-item {
-            min-width: 180px;
+        .chart-container {
             background: rgba(20, 20, 30, 0.8);
             border-radius: 15px;
             padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            height: 300px;
+        }
+
+        /* Games Section */
+        .games-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .game-card {
+            background: rgba(35, 35, 45, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 3px solid var(--peace-blue);
+            animation: breathe 6s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* Mood Timeline */
+        .timeline-container {
+            background: rgba(35, 35, 45, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .history-item:hover {
-            transform: translateY(-10px);
-            background: rgba(30, 30, 40, 0.9);
-            border-color: rgba(255, 154, 60, 0.3);
+        .timeline {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 20px 0;
         }
 
-        .history-mood {
-            font-size: 1.8rem;
+        .timeline-item {
+            min-width: 120px;
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -8px;
+            width: 16px;
+            height: 16px;
+            background: var(--mood-color);
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* AI Coach */
+        .ai-coach {
+            background: rgba(35, 35, 45, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .coach-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--calm-purple), var(--peace-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .coach-message {
+            flex: 1;
+        }
+
+        .coach-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .achievement-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card.unlocked {
+            background: rgba(255, 209, 102, 0.15);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
             margin-bottom: 10px;
         }
 
-        .history-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .history-time {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
-
-        .glow-effect {
+        /* Notifications */
+        .notification {
             position: fixed;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
-            filter: blur(60px);
-            opacity: 0.25;
-            z-index: -1;
-            animation: float 25s infinite ease-in-out;
+            top: 20px;
+            right: 20px;
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 350px;
+            z-index: 1000;
+            border-left: 5px solid var(--alert-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
         }
 
-        .glow-effect:nth-child(2) {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(157, 78, 221, 0.3) 0%, transparent 70%);
-            animation-delay: -8s;
-            animation-duration: 30s;
+        .notification.show {
+            transform: translateX(0);
         }
 
-        .glow-effect:nth-child(3) {
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, rgba(239, 71, 111, 0.3) 0%, transparent 70%);
-            animation-delay: -15s;
-            animation-duration: 22s;
-        }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--soft-yellow);
-            opacity: 0;
-        }
-
-        .visual-particle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.7;
-        }
-
+        /* Footer */
         footer {
+            margin-top: 50px;
+            padding: 40px 20px;
             text-align: center;
-            padding: 50px 20px;
-            margin-top: 80px;
             color: var(--text-dim);
-            font-size: 0.95rem;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             background: rgba(15, 15, 20, 0.5);
-            border-radius: 20px 20px 0 0;
         }
 
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--soft-yellow);
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            20% {
-                transform: translate(120px, 180px) rotate(90deg) scale(1.1);
-            }
-            40% {
-                transform: translate(-80px, 250px) rotate(180deg) scale(0.9);
-            }
-            60% {
-                transform: translate(200px, 100px) rotate(270deg) scale(1.05);
-            }
-            80% {
-                transform: translate(50px, 300px) rotate(360deg) scale(0.95);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .logo {
-                font-size: 2.6rem;
-            }
-            
-            .mood-option {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .mood-icon {
-                font-size: 2.3rem;
-            }
-            
-            .experience-area {
-                padding: 35px;
-            }
-            
-            .visual-container {
-                min-width: 300px;
-                height: 300px;
-            }
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .logo {
-                font-size: 2.2rem;
+            .dashboard {
+                grid-template-columns: 1fr;
             }
             
-            .mood-option {
-                width: 100px;
-                height: 100px;
+            .input-methods {
+                flex-direction: column;
             }
             
-            .mood-icon {
-                font-size: 1.9rem;
+            .sound-options {
+                grid-template-columns: 1fr;
             }
             
-            .mood-name {
-                font-size: 1rem;
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
             
-            .experience-title {
-                font-size: 1.8rem;
-            }
-            
-            .visual-container {
-                min-width: 280px;
-                height: 280px;
-            }
-            
-            .mood-visual {
-                font-size: 7rem;
-            }
-            
-            .actions {
-                gap: 15px;
-            }
-            
-            .action-btn {
-                padding: 14px 25px;
+            .ai-coach {
+                flex-direction: column;
+                text-align: center;
             }
         }
 
-        @media (max-width: 480px) {
-            .logo {
-                font-size: 1.9rem;
-            }
-            
-            .mood-option {
-                width: 85px;
-                height: 85px;
-            }
-            
-            .mood-icon {
-                font-size: 1.6rem;
-            }
-            
-            .mood-name {
-                font-size: 0.9rem;
-            }
-            
-            .experience-area {
-                padding: 25px;
-            }
-            
-            .visual-container {
-                min-width: 250px;
-                height: 250px;
-            }
-            
-            .mood-visual {
-                font-size: 5.5rem;
-            }
-            
-            .input-btn {
-                width: 100%;
-                justify-content: center;
-            }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--warm-orange);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cozy-red);
         }
     </style>
 </head>
 <body>
-    <!-- Glow effects -->
-    <div class="glow-effect" style="top: 5%; left: 3%;"></div>
-    <div class="glow-effect" style="top: 65%; right: 5%;"></div>
-    <div class="glow-effect" style="bottom: 10%; left: 10%;"></div>
+    <!-- Background Particles -->
+    <div id="particles"></div>
     
-    <!-- Background particles -->
-    <div class="particles" id="particles"></div>
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
 
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1 class="logo">MoodScape Pro</h1>
-            <p class="tagline">An advanced interactive experience that transforms based on your emotional state. Select your mood or describe it in your own words to customize the environment.</p>
-            
-            <div class="mood-input-section">
-                <h2 class="input-title">Describe Your Current Mood</h2>
-                <div class="mood-input-container">
-                    <div class="custom-mood-input">
-                        <input type="text" id="customMoodInput" placeholder="How are you feeling? (e.g., 'hopeful', 'stressed', 'creative', 'nostalgic')">
-                        <button class="input-btn" id="analyzeMoodBtn">
-                            <i class="fas fa-magic"></i> Analyze Mood
-                        </button>
-                    </div>
-                    <p style="color: var(--text-dim); text-align: center; width: 100%; margin-top: 10px; font-size: 0.9rem;">
-                        Our AI will analyze your mood and create a personalized experience
-                    </p>
+            <div class="logo-section">
+                <h1 class="logo">MoodScape Pro+</h1>
+                <div class="streak-counter">
+                    <i class="fas fa-fire fire"></i>
+                    <span id="streakCount">0 Day Streak</span>
                 </div>
             </div>
             
-            <div class="mood-selector" id="moodSelector">
-                <!-- Mood options will be generated by JavaScript -->
-            </div>
-            
-            <div class="mood-description" id="moodDescription">
-                Select a mood or describe your feelings to begin your personalized experience
+            <div class="user-actions">
+                <button class="method-btn" id="voiceInputBtn">
+                    <i class="fas fa-microphone"></i> Voice Input
+                </button>
+                <button class="method-btn" id="exportBtn">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="method-btn" id="themeBtn">
+                    <i class="fas fa-palette"></i> Theme
+                </button>
             </div>
         </header>
-        
-        <main>
-            <div class="experience-area" id="experienceArea">
-                <h2 class="experience-title" id="experienceTitle">Your Mood Experience Awaits</h2>
-                
-                <div class="experience-content">
-                    <div class="visual-container">
-                        <div class="visual-effects" id="visualEffects"></div>
-                        <div class="mood-visual" id="moodVisual">
-                            <i class="fas fa-smile"></i>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <main class="main-content">
+                <!-- Enhanced Mood Input -->
+                <section class="mood-input-section">
+                    <h2 class="input-title">
+                        <i class="fas fa-brain"></i> How Are You Feeling Today?
+                    </h2>
+                    
+                    <div class="mood-input-container">
+                        <div class="input-methods">
+                            <button class="method-btn active" data-method="text">
+                                <i class="fas fa-keyboard"></i> Type
+                            </button>
+                            <button class="method-btn" data-method="voice">
+                                <i class="fas fa-microphone"></i> Voice
+                            </button>
+                            <button class="method-btn" data-method="select">
+                                <i class="fas fa-smile"></i> Select
+                            </button>
+                            <button class="method-btn" data-method="ai">
+                                <i class="fas fa-robot"></i> AI Detect
+                            </button>
+                        </div>
+                        
+                        <div id="textInput" class="input-method active">
+                            <div class="input-group">
+                                <input type="text" id="moodText" placeholder="Describe your mood in detail...">
+                                <button id="analyzeText" class="method-btn" style="background: var(--warm-orange);">
+                                    <i class="fas fa-magic"></i> Analyze
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="voiceInput" class="input-method" style="display: none;">
+                            <div class="voice-status">
+                                <div class="voice-visualizer" id="voiceVisualizer"></div>
+                                <button id="startRecording" class="method-btn">
+                                    <i class="fas fa-microphone"></i> Start Recording
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="selectInput" class="input-method" style="display: none;">
+                            <div class="mood-selector" id="moodSelector"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3D Mood Visualizer -->
+                <section class="visualizer-container">
+                    <h3 class="visualizer-title">
+                        <i class="fas fa-cube"></i> 3D Mood Visualization
+                    </h3>
+                    <canvas id="mood3dCanvas"></canvas>
+                </section>
+
+                <!-- Analytics Dashboard -->
+                <section class="analytics-dashboard">
+                    <h3 class="input-title">
+                        <i class="fas fa-chart-line"></i> Mood Analytics
+                    </h3>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <canvas id="moodChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mood Games -->
+                <section class="games-section">
+                    <div class="game-card">
+                        <h4><i class="fas fa-wind"></i> Breathing Exercise</h4>
+                        <div class="breathing-circle"></div>
+                        <p>Follow the circle: Breathe in (expands), Hold, Breathe out</p>
+                        <button class="method-btn" style="margin-top: 15px;">
+                            <i class="fas fa-play"></i> Start Exercise
+                        </button>
+                    </div>
+                    
+                    <div class="game-card">
+                        <h4><i class="fas fa-star"></i> Gratitude Practice</h4>
+                        <div id="gratitudeList">
+                            <input type="text" id="gratitudeInput" placeholder="One thing I'm grateful for..." style="width: 100%; margin-bottom: 10px;">
+                            <button id="addGratitude" class="method-btn">Add +</button>
+                            <div id="gratitudeItems" style="margin-top: 15px;"></div>
                         </div>
                     </div>
                     
-                    <div class="content-text">
-                        <h3 id="contentTitle">Discover Your Moodscape</h3>
-                        <p id="contentText">This advanced interactive space adapts to reflect your current emotional state. Choose from predefined moods or describe your own to transform the visuals, colors, sounds, and content to match your feelings.</p>
-                        <p id="contentTip">Each mood offers a unique combination of dynamic visual effects, adaptive color schemes, and carefully curated content designed to enhance your emotional experience.</p>
-                        
-                        <div class="mood-stats" id="moodStats">
-                            <div class="stat-item">
-                                <div class="stat-value" id="moodIntensity">0%</div>
-                                <div class="stat-label">Mood Intensity</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="moodDuration">0 min</div>
-                                <div class="stat-label">Duration</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="moodMatches">0</div>
-                                <div class="stat-label">Mood Matches</div>
-                            </div>
+                    <div class="game-card">
+                        <h4><i class="fas fa-brain"></i> Mindful Minute</h4>
+                        <div class="timer" style="font-size: 2rem; text-align: center; margin: 20px 0;">
+                            <span id="mindfulTimer">60</span>s
+                        </div>
+                        <button id="startMindful" class="method-btn">
+                            <i class="fas fa-play"></i> Start 60s
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Mood Timeline -->
+                <section class="timeline-container">
+                    <h3 class="input-title">
+                        <i class="fas fa-history"></i> Your Mood Journey
+                    </h3>
+                    <div class="timeline" id="moodTimeline"></div>
+                </section>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- AI Mood Coach -->
+                <div class="ai-coach">
+                    <div class="coach-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="coach-message">
+                        <p id="coachMessage">Welcome! I'm your AI mood coach. How can I help you today?</p>
+                        <div class="coach-options">
+                            <button class="method-btn small">Suggest Activity</button>
+                            <button class="method-btn small">Analyze Pattern</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="mood-history" id="moodHistory">
-                <h2 class="history-title">Your Mood History</h2>
-                <div class="history-list" id="historyList">
-                    <!-- Mood history items will be added here -->
+
+                <!-- Ambient Sounds -->
+                <div class="feature-card">
+                    <h3><i class="fas fa-volume-up"></i> Ambient Sounds</h3>
+                    <div class="sound-player">
+                        <div class="sound-options">
+                            <button class="sound-btn" data-sound="rain">
+                                <i class="fas fa-cloud-rain"></i> Rain
+                            </button>
+                            <button class="sound-btn" data-sound="forest">
+                                <i class="fas fa-tree"></i> Forest
+                            </button>
+                            <button class="sound-btn" data-sound="waves">
+                                <i class="fas fa-water"></i> Ocean
+                            </button>
+                            <button class="sound-btn" data-sound="fireplace">
+                                <i class="fas fa-fire"></i> Fireplace
+                            </button>
+                        </div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-down"></i>
+                            <input type="range" id="volumeSlider" min="0" max="100" value="50" style="flex: 1;">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="actions">
-                <button class="action-btn" id="musicBtn">
-                    <i class="fas fa-music"></i> Mood Music
-                </button>
-                <button class="action-btn" id="quoteBtn">
-                    <i class="fas fa-quote-right"></i> Inspiring Quote
-                </button>
-                <button class="action-btn" id="activityBtn">
-                    <i class="fas fa-hiking"></i> Mood Activity
-                </button>
-                <button class="action-btn" id="visualizeBtn">
-                    <i class="fas fa-eye"></i> Visualize Mood
-                </button>
-                <button class="action-btn" id="shareBtn">
-                    <i class="fas fa-share-alt"></i> Share Mood
-                </button>
-                <button class="action-btn" id="resetBtn">
-                    <i class="fas fa-redo"></i> Reset
-                </button>
-            </div>
-        </main>
-        
+
+                <!-- Mood Journal -->
+                <div class="feature-card">
+                    <h3><i class="fas fa-book"></i> Mood Journal</h3>
+                    <textarea class="journal-textarea" id="journalEntry" placeholder="What's on your mind today? Write freely..."></textarea>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="saveJournal" class="method-btn" style="flex: 1;">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button id="viewJournal" class="method-btn">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="feature-card">
+                    <h3><i class="fas fa-trophy"></i> Achievements</h3>
+                    <div class="achievements-grid" id="achievementsGrid"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="feature-card">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="method-btn" id="musicBtn">
+                            <i class="fas fa-music"></i> Music
+                        </button>
+                        <button class="method-btn" id="quoteBtn">
+                            <i class="fas fa-quote-right"></i> Quote
+                        </button>
+                        <button class="method-btn" id="activityBtn">
+                            <i class="fas fa-hiking"></i> Activity
+                        </button>
+                        <button class="method-btn" id="meditateBtn">
+                            <i class="fas fa-spa"></i> Meditate
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Footer -->
         <footer>
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">MoodScape Pro</h3>
-                    <p>An advanced interactive mood-based experience that adapts to your emotions in real-time.</p>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">Features</h3>
-                    <p>• AI Mood Analysis</p>
-                    <p>• Dynamic Visual Effects</p>
-                    <p>• Mood History Tracking</p>
-                    <p>• Personalized Recommendations</p>
-                </div>
-                <div class="footer-section">
-                    <h3 class="footer-title">Tips</h3>
-                    <p>• Describe your mood in detail for better personalization</p>
-                    <p>• Try different moods to discover new experiences</p>
-                    <p>• Use the mood history to track your emotional patterns</p>
-                </div>
-            </div>
-            <p style="margin-top: 40px;">MoodScape Pro &copy; 2023 | Advanced Mood-Based Interactive Experience</p>
+            <p>MoodScape Pro+ | Advanced Emotional Wellness Platform | Data is stored locally on your device</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                <button class="method-btn small" id="exportAll">Export All Data</button>
+                <button class="method-btn small" id="resetData">Reset Data</button>
+                <button class="method-btn small" id="privacyBtn">Privacy</button>
+            </p>
         </footer>
     </div>
 
     <script>
         // Enhanced Mood data configuration
         const moods = [
-            {
-                id: 'joyful',
-                name: 'Joyful',
-                icon: 'fas fa-laugh-beam',
-                color: '#ff9a3c',
-                bgColor: 'radial-gradient(circle, rgba(255,154,60,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'A bright, uplifting experience filled with warm, glowing energy and positive vibes. Perfect for moments of happiness and celebration.',
-                title: 'Radiant Joy Experience',
-                content: 'Welcome to a space filled with vibrant energy and positivity! Let the warm glow surround you as you embrace this moment of happiness. Sunlight-like particles dance around, creating an atmosphere of pure delight.',
-                tip: 'Focus on the glowing elements and let the warmth fill your space. Try the "Visualize Mood" button for an extra burst of joy!',
-                visual: 'fas fa-sun',
-                music: 'Upbeat, cheerful tunes',
-                quotes: [
-                    "Joy is the simplest form of gratitude.",
-                    "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.",
-                    "Joy does not simply happen to us. We have to choose joy and keep choosing it every day.",
-                    "Happiness is not something ready-made. It comes from your own actions."
-                ],
-                activities: [
-                    "Dance to your favorite upbeat song",
-                    "Write down three things you're grateful for",
-                    "Call a friend and share a funny story",
-                    "Take a walk in nature and notice the beauty around you"
-                ],
-                intensity: 4,
-                visualEffect: 'sparkle'
-            },
-            {
-                id: 'calm',
-                name: 'Calm',
-                icon: 'fas fa-spa',
-                color: '#9d4edd',
-                bgColor: 'radial-gradient(circle, rgba(157,78,221,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'A peaceful, serene environment with soothing colors and gentle movements. Designed for relaxation and mindfulness.',
-                title: 'Tranquil Calm Experience',
-                content: 'Breathe deeply and let the gentle glow wash over you. This space is designed to bring peace and tranquility to your mind. Flowing particles move like water, creating a sense of calm and stillness.',
-                tip: 'Follow the gentle movement of particles to enhance your sense of calm. Try synchronized breathing with the visual pulses.',
-                visual: 'fas fa-water',
-                music: 'Ambient, relaxing sounds',
-                quotes: [
-                    "Peace is the result of retraining your mind to process life as it is, rather than as you think it should be.",
-                    "Calm mind brings inner strength and self-confidence, so that's very important for good health.",
-                    "The more tranquil a man becomes, the greater is his success, his influence, his power for good.",
-                    "Silence is not the absence of something but the presence of everything."
-                ],
-                activities: [
-                    "Practice 5 minutes of deep breathing",
-                    "Try a guided meditation",
-                    "Sip a warm herbal tea slowly",
-                    "Listen to the sounds of nature"
-                ],
-                intensity: 2,
-                visualEffect: 'ripple'
-            },
-            {
-                id: 'energetic',
-                name: 'Energetic',
-                icon: 'fas fa-bolt',
-                color: '#ef476f',
-                bgColor: 'radial-gradient(circle, rgba(239,71,111,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'A dynamic, lively atmosphere with vibrant colors and pulsating energy. Perfect for motivation and action.',
-                title: 'Dynamic Energy Experience',
-                content: 'Feel the vibrant energy flowing through this space! Let the dynamic glow fuel your motivation and creativity. Pulsating particles move with intensity, matching your energetic state.',
-                tip: 'The pulsating visuals are designed to match your energetic state. Try matching your breathing to the rhythm for an energizing effect.',
-                visual: 'fas fa-fire',
-                music: 'Energetic, driving beats',
-                quotes: [
-                    "Energy and persistence conquer all things.",
-                    "Your energy introduces you before you even speak.",
-                    "The energy of the mind is the essence of life.",
-                    "Don't watch the clock; do what it does. Keep going."
-                ],
-                activities: [
-                    "Do a 5-minute burst of exercise",
-                    "Tackle a challenging task you've been avoiding",
-                    "Create a vision board for your goals",
-                    "Listen to motivational podcasts"
-                ],
-                intensity: 5,
-                visualEffect: 'pulse'
-            },
-            {
-                id: 'cozy',
-                name: 'Cozy',
-                icon: 'fas fa-home',
-                color: '#ffd166',
-                bgColor: 'radial-gradient(circle, rgba(255,209,102,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'A warm, comforting space that feels like a gentle hug on a cold day. Perfect for relaxation and comfort.',
-                title: 'Warm Cozy Experience',
-                content: 'Wrap yourself in this warm, comforting glow. This space is designed to make you feel safe, secure, and completely at ease. Soft particles drift like embers from a fireplace, creating a cozy atmosphere.',
-                tip: 'The gentle pulses of light mimic a cozy fireplace or warm blanket. Imagine yourself wrapped in comfort as you experience this space.',
-                visual: 'fas fa-couch',
-                music: 'Soft, acoustic melodies',
-                quotes: [
-                    "There is nothing like staying at home for real comfort.",
-                    "Cozy is an atmosphere, a feeling, a state of mind.",
-                    "The warmth of home is not in the walls but in the hearts that live within.",
-                    "Comfort is the one thing you cannot get by looking for it."
-                ],
-                activities: [
-                    "Wrap yourself in a soft blanket",
-                    "Read a book by soft light",
-                    "Enjoy a warm beverage",
-                    "Write in a journal about things that make you feel safe"
-                ],
-                intensity: 3,
-                visualEffect: 'float'
-            },
-            {
-                id: 'reflective',
-                name: 'Reflective',
-                icon: 'fas fa-moon',
-                color: '#118ab2',
-                bgColor: 'radial-gradient(circle, rgba(17,138,178,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'A thoughtful, introspective environment with deep colors and gentle movements. Designed for contemplation and insight.',
-                title: 'Deep Reflection Experience',
-                content: 'This contemplative space invites you to look inward. The gentle glow provides just enough light for thoughtful reflection. Particles move in thoughtful patterns, encouraging deep thinking.',
-                tip: 'Watch how the particles move slowly, encouraging mindful observation. Try to match your thoughts to their flowing patterns.',
-                visual: 'fas fa-star',
-                music: 'Thoughtful, instrumental pieces',
-                quotes: [
-                    "The unexamined life is not worth living.",
-                    "We do not learn from experience... we learn from reflecting on experience.",
-                    "Life can only be understood backwards; but it must be lived forwards.",
-                    "Knowing yourself is the beginning of all wisdom."
-                ],
-                activities: [
-                    "Journal about your thoughts and feelings",
-                    "Contemplate a meaningful question",
-                    "Practice mindfulness meditation",
-                    "Review your day and note what you learned"
-                ],
-                intensity: 3,
-                visualEffect: 'orbit'
-            },
-            {
-                id: 'hopeful',
-                name: 'Hopeful',
-                icon: 'fas fa-seedling',
-                color: '#06d6a0',
-                bgColor: 'radial-gradient(circle, rgba(6,214,160,0.25) 0%, rgba(25,25,35,0.9) 70%)',
-                description: 'An optimistic, forward-looking environment with uplifting colors and growing visuals. Perfect for planning and aspiration.',
-                title: 'Optimistic Hope Experience',
-                content: 'Welcome to a space of possibility and growth! This environment is designed to nurture hope and optimism. Particles rise like seeds taking flight, representing new beginnings.',
-                tip: 'Watch how particles grow and rise upward, symbolizing hope and progress. Focus on the upward movement to enhance your optimistic outlook.',
-                visual: 'fas fa-feather-alt',
-                music: 'Inspirational, uplifting scores',
-                quotes: [
-                    "Hope is being able to see that there is light despite all of the darkness.",
-                    "The very least you can do in your life is to figure out what you hope for.",
-                    "Hope is the thing with feathers that perches in the soul.",
-                    "Where there is no vision, the people perish."
-                ],
-                activities: [
-                    "Write down your hopes for the future",
-                    "Visualize your ideal day",
-                    "Plan one small step toward a goal",
-                    "Share your hopes with someone you trust"
-                ],
-                intensity: 4,
-                visualEffect: 'grow'
-            }
+            { id: 'joyful', name: 'Joyful', color: '#ff9a3c', icon: 'fas fa-laugh-beam', intensity: 4 },
+            { id: 'calm', name: 'Calm', color: '#9d4edd', icon: 'fas fa-spa', intensity: 2 },
+            { id: 'energetic', name: 'Energetic', color: '#ef476f', icon: 'fas fa-bolt', intensity: 5 },
+            { id: 'cozy', name: 'Cozy', color: '#ffd166', icon: 'fas fa-home', intensity: 3 },
+            { id: 'reflective', name: 'Reflective', color: '#118ab2', icon: 'fas fa-moon', intensity: 3 },
+            { id: 'hopeful', name: 'Hopeful', color: '#06d6a0', icon: 'fas fa-seedling', intensity: 4 },
+            { id: 'creative', name: 'Creative', color: '#ff4d8d', icon: 'fas fa-palette', intensity: 4 },
+            { id: 'focused', name: 'Focused', color: '#7209b7', icon: 'fas fa-bullseye', intensity: 4 }
         ];
 
-        // Additional mood keywords for AI analysis
-        const moodKeywords = {
-            happy: ['joyful', 'excited', 'cheerful', 'delighted', 'elated', 'ecstatic', 'blissful'],
-            calm: ['peaceful', 'serene', 'tranquil', 'relaxed', 'placid', 'composed', 'unruffled'],
-            energetic: ['vibrant', 'lively', 'dynamic', 'animated', 'spirited', 'vigorous', 'enthusiastic'],
-            cozy: ['comfortable', 'snug', 'warm', 'homey', 'inviting', 'nestlike', 'sheltered'],
-            reflective: ['thoughtful', 'contemplative', 'introspective', 'pensive', 'meditative', 'philosophical'],
-            hopeful: ['optimistic', 'expectant', 'confident', 'sanguine', 'buoyant', 'positive', 'forward-looking'],
-            sad: ['melancholy', 'down', 'blue', 'disheartened', 'gloomy', 'mournful', 'somber'],
-            creative: ['inspired', 'imaginative', 'inventive', 'artistic', 'innovative', 'original', 'visionary'],
-            focused: ['concentrated', 'attentive', 'absorbed', 'engrossed', 'intent', 'rapt', 'immersed'],
-            nostalgic: ['sentimental', 'wistful', 'yearning', 'reminiscent', 'retrospective', 'longing']
+        // Achievements data
+        const achievements = [
+            { id: 'first_checkin', name: 'First Step', desc: 'Complete your first mood check-in', icon: '🥳', unlocked: true },
+            { id: 'streak_3', name: 'Consistent', desc: '3-day check-in streak', icon: '🔥', unlocked: false },
+            { id: 'streak_7', name: 'Week Warrior', desc: '7-day streak', icon: '🏆', unlocked: false },
+            { id: 'journal_5', name: 'Reflective Soul', desc: '5 journal entries', icon: '📖', unlocked: false },
+            { id: 'all_moods', name: 'Mood Explorer', desc: 'Try all mood types', icon: '🗺️', unlocked: false },
+            { id: 'night_owl', name: 'Night Owl', desc: 'Check in after 10 PM', icon: '🌙', unlocked: false },
+            { id: 'morning_person', name: 'Early Bird', desc: 'Check in before 8 AM', icon: '🌅', unlocked: false },
+            { id: 'meditator', name: 'Zen Master', desc: 'Complete 5 meditation sessions', icon: '🧘', unlocked: false }
+        ];
+
+        // Sound data
+        const sounds = {
+            rain: { name: 'Rain', icon: 'fas fa-cloud-rain', url: '#' },
+            forest: { name: 'Forest', icon: 'fas fa-tree', url: '#' },
+            waves: { name: 'Ocean Waves', icon: 'fas fa-water', url: '#' },
+            fireplace: { name: 'Fireplace', icon: 'fas fa-fire', url: '#' }
         };
 
-        // DOM Elements
-        const moodSelector = document.getElementById('moodSelector');
-        const moodDescription = document.getElementById('moodDescription');
-        const experienceArea = document.getElementById('experienceArea');
-        const experienceTitle = document.getElementById('experienceTitle');
-        const moodVisual = document.getElementById('moodVisual');
-        const contentTitle = document.getElementById('contentTitle');
-        const contentText = document.getElementById('contentText');
-        const contentTip = document.getElementById('contentTip');
-        const moodStats = document.getElementById('moodStats');
-        const moodIntensity = document.getElementById('moodIntensity');
-        const moodDuration = document.getElementById('moodDuration');
-        const moodMatches = document.getElementById('moodMatches');
-        const visualEffects = document.getElementById('visualEffects');
-        const historyList = document.getElementById('historyList');
-        const customMoodInput = document.getElementById('customMoodInput');
-        const analyzeMoodBtn = document.getElementById('analyzeMoodBtn');
-        const musicBtn = document.getElementById('musicBtn');
-        const quoteBtn = document.getElementById('quoteBtn');
-        const activityBtn = document.getElementById('activityBtn');
-        const visualizeBtn = document.getElementById('visualizeBtn');
-        const shareBtn = document.getElementById('shareBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const particlesContainer = document.getElementById('particles');
+        // App State
+        let appState = {
+            currentMood: null,
+            moodHistory: [],
+            journalEntries: [],
+            achievements: [],
+            streak: 0,
+            lastCheckIn: null,
+            settings: {
+                volume: 50,
+                theme: 'dark',
+                notifications: true
+            }
+        };
 
-        // App state
-        let currentMood = null;
-        let particles = [];
-        let moodHistory = [];
-        let sessionStartTime = Date.now();
-        let moodMatchCount = 0;
-        let intensityLevel = 3;
-        let visualEffectInterval = null;
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAppState();
+            initializeUI();
+            initializeCharts();
+            initialize3DVisualizer();
+            initializeVoiceRecognition();
+            updateStreak();
+            showNotification('Welcome to MoodScape Pro+! Your emotional wellness journey starts here.', 'info');
+        });
 
-        // Initialize the mood selector
-        function initMoodSelector() {
-            moods.forEach(mood => {
-                const moodElement = document.createElement('div');
-                moodElement.className = 'mood-option';
-                moodElement.setAttribute('data-mood', mood.id);
-                moodElement.innerHTML = `
-                    <i class="${mood.icon} mood-icon"></i>
-                    <span class="mood-name">${mood.name}</span>
-                    <div class="mood-intensity">
-                        ${Array.from({length: 5}).map((_, i) => 
-                            `<div class="intensity-dot ${i < mood.intensity ? 'active' : ''}"></div>`
-                        ).join('')}
-                    </div>
-                `;
-                
-                moodElement.addEventListener('click', () => selectMood(mood.id));
-                
-                moodSelector.appendChild(moodElement);
-            });
+        // Load app state from localStorage
+        function loadAppState() {
+            const saved = localStorage.getItem('moodscapePro');
+            if (saved) {
+                appState = JSON.parse(saved);
+                updateAchievementsDisplay();
+                updateTimeline();
+                updateJournalDisplay();
+            }
         }
 
-        // AI Mood Analysis from text input
-        function analyzeMoodFromText(text) {
-            const input = text.toLowerCase().trim();
-            if (!input) return null;
-            
-            // Check for direct mood matches
-            for (const mood of moods) {
-                if (input.includes(mood.name.toLowerCase()) || input.includes(mood.id)) {
-                    return mood.id;
-                }
-            }
-            
-            // Check keyword matches
-            let bestMatch = null;
-            let highestScore = 0;
-            
-            for (const [moodType, keywords] of Object.entries(moodKeywords)) {
-                let score = 0;
-                keywords.forEach(keyword => {
-                    if (input.includes(keyword)) {
-                        score += 3;
-                    }
+        // Save app state to localStorage
+        function saveAppState() {
+            localStorage.setItem('moodscapePro', JSON.stringify(appState));
+        }
+
+        // Initialize UI components
+        function initializeUI() {
+            // Initialize mood selector
+            const moodSelector = document.getElementById('moodSelector');
+            moods.forEach(mood => {
+                const btn = document.createElement('button');
+                btn.className = 'method-btn';
+                btn.innerHTML = `<i class="${mood.icon}"></i> ${mood.name}`;
+                btn.style.borderColor = mood.color;
+                btn.addEventListener('click', () => selectMood(mood.id));
+                moodSelector.appendChild(btn);
+            });
+
+            // Initialize input method switcher
+            document.querySelectorAll('.method-btn[data-method]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const method = e.target.closest('button').dataset.method;
+                    switchInputMethod(method);
                 });
-                
-                // Check for synonyms and related words
-                if (input.includes('happy') || input.includes('good') || input.includes('great')) {
-                    if (moodType === 'happy') score += 2;
-                }
-                if (input.includes('sad') || input.includes('bad') || input.includes('down')) {
-                    if (moodType === 'sad') score += 2;
-                }
-                if (input.includes('tired') || input.includes('sleep')) {
-                    if (moodType === 'calm') score += 1;
-                }
-                if (input.includes('work') || input.includes('focus')) {
-                    if (moodType === 'focused') score += 2;
-                }
-                
-                if (score > highestScore) {
-                    highestScore = score;
-                    bestMatch = moodType;
-                }
-            }
+            });
+
+            // Initialize sound buttons
+            document.querySelectorAll('.sound-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sound = e.target.closest('button').dataset.sound;
+                    playSound(sound);
+                });
+            });
+
+            // Initialize achievement display
+            updateAchievementsDisplay();
+
+            // Initialize event listeners
+            document.getElementById('analyzeText').addEventListener('click', analyzeTextMood);
+            document.getElementById('startRecording').addEventListener('click', toggleRecording);
+            document.getElementById('saveJournal').addEventListener('click', saveJournalEntry);
+            document.getElementById('addGratitude').addEventListener('click', addGratitudeItem);
+            document.getElementById('startMindful').addEventListener('click', startMindfulTimer);
+            document.getElementById('exportAll').addEventListener('click', exportAllData);
+            document.getElementById('resetData').addEventListener('click', resetAllData);
             
-            // Map keyword result to mood ID
-            if (bestMatch) {
-                const moodMap = {
-                    'happy': 'joyful',
-                    'calm': 'calm',
-                    'energetic': 'energetic',
-                    'cozy': 'cozy',
-                    'reflective': 'reflective',
-                    'hopeful': 'hopeful',
-                    'sad': 'reflective', // Map sad to reflective for a supportive experience
-                    'creative': 'energetic',
-                    'focused': 'reflective',
-                    'nostalgic': 'cozy'
-                };
-                
-                return moodMap[bestMatch] || 'joyful';
+            // Add more event listeners...
+        }
+
+        // Switch between input methods
+        function switchInputMethod(method) {
+            // Update active button
+            document.querySelectorAll('.method-btn[data-method]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.method-btn[data-method="${method}"]`).classList.add('active');
+
+            // Show/hide input areas
+            document.querySelectorAll('.input-method').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.getElementById(`${method}Input`).style.display = 'block';
+        }
+
+        // Analyze text mood input
+        function analyzeTextMood() {
+            const text = document.getElementById('moodText').value;
+            if (!text.trim()) {
+                showNotification('Please enter how you are feeling', 'warning');
+                return;
             }
+
+            // Simple AI mood detection
+            const detectedMood = detectMoodFromText(text);
+            selectMood(detectedMood);
             
-            // Default to joyful if no match found
-            return 'joyful';
+            // Show AI response
+            const aiResponse = generateAIResponse(detectedMood, text);
+            updateCoachMessage(aiResponse);
+            
+            showNotification(`Mood detected: ${detectedMood}`, 'success');
+        }
+
+        // Simple mood detection from text
+        function detectMoodFromText(text) {
+            const textLower = text.toLowerCase();
+            const moodScores = {};
+            
+            // Score keywords
+            moods.forEach(mood => {
+                let score = 0;
+                const keywords = getMoodKeywords(mood.id);
+                keywords.forEach(keyword => {
+                    if (textLower.includes(keyword)) score += 2;
+                });
+                moodScores[mood.id] = score;
+            });
+
+            // Fallback: detect positive/negative sentiment
+            const positiveWords = ['good', 'great', 'happy', 'excited', 'wonderful', 'amazing'];
+            const negativeWords = ['bad', 'sad', 'angry', 'upset', 'tired', 'stressed'];
+            
+            positiveWords.forEach(word => {
+                if (textLower.includes(word)) moodScores['joyful'] += 3;
+            });
+            
+            negativeWords.forEach(word => {
+                if (textLower.includes(word)) moodScores['reflective'] += 3;
+            });
+
+            // Return mood with highest score
+            return Object.keys(moodScores).reduce((a, b) => moodScores[a] > moodScores[b] ? a : b);
+        }
+
+        function getMoodKeywords(moodId) {
+            const keywords = {
+                joyful: ['happy', 'joy', 'excited', 'great', 'wonderful', 'amazing', 'good'],
+                calm: ['calm', 'peaceful', 'relaxed', 'chill', 'serene', 'tranquil'],
+                energetic: ['energetic', 'excited', 'active', 'pumped', 'motivated', 'energized'],
+                cozy: ['cozy', 'comfortable', 'warm', 'safe', 'snug', 'homey'],
+                reflective: ['thoughtful', 'reflective', 'contemplative', 'deep', 'pensive', 'sad'],
+                hopeful: ['hopeful', 'optimistic', 'positive', 'looking forward', 'excited for'],
+                creative: ['creative', 'inspired', 'artistic', 'imaginative', 'innovative'],
+                focused: ['focused', 'concentrated', 'attentive', 'productive', 'determined']
+            };
+            return keywords[moodId] || [];
         }
 
         // Select a mood
-        function selectMood(moodId, fromInput = false) {
+        function selectMood(moodId) {
             const mood = moods.find(m => m.id === moodId);
             if (!mood) return;
+
+            appState.currentMood = mood;
+            appState.moodHistory.push({
+                mood: mood,
+                timestamp: new Date().toISOString(),
+                intensity: mood.intensity
+            });
+
+            // Update streak
+            updateStreak();
+
+            // Update 3D visualizer
+            update3DVisualizer(mood);
+
+            // Update charts
+            updateCharts();
+
+            // Update timeline
+            updateTimeline();
+
+            // Check achievements
+            checkAchievements();
+
+            // Save state
+            saveAppState();
+
+            // Show notification
+            showNotification(`Recorded ${mood.name} mood!`, 'success');
+        }
+
+        // Initialize 3D visualizer
+        function initialize3DVisualizer() {
+            const canvas = document.getElementById('mood3dCanvas');
+            const ctx = canvas.getContext('2d');
             
-            // Update current mood
-            currentMood = mood;
-            intensityLevel = mood.intensity;
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
             
-            // Add to history
-            addToHistory(mood, fromInput);
+            // Initial visualization
+            update3DVisualizer(moods[0]);
+        }
+
+        function update3DVisualizer(mood) {
+            const canvas = document.getElementById('mood3dCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
             
-            // Update active state in UI
-            document.querySelectorAll('.mood-option').forEach(option => {
-                option.classList.remove('active');
-                if (option.getAttribute('data-mood') === moodId) {
-                    option.classList.add('active');
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Create gradient background
+            const gradient = ctx.createRadialGradient(
+                width/2, height/2, 0,
+                width/2, height/2, width/2
+            );
+            gradient.addColorStop(0, `${mood.color}40`);
+            gradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw particles
+            const particleCount = 50 + mood.intensity * 20;
+            for (let i = 0; i < particleCount; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const size = Math.random() * 5 + 2;
+                const opacity = Math.random() * 0.5 + 0.3;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fillStyle = `${mood.color}${Math.floor(opacity * 255).toString(16)}`;
+                ctx.fill();
+                
+                // Add glow effect
+                ctx.shadowColor = mood.color;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            // Draw central orb
+            const time = Date.now() * 0.001;
+            const pulse = Math.sin(time * 2) * 10 + 50;
+            
+            ctx.beginPath();
+            ctx.arc(width/2, height/2, pulse, 0, Math.PI * 2);
+            const orbGradient = ctx.createRadialGradient(
+                width/2, height/2, 0,
+                width/2, height/2, pulse
+            );
+            orbGradient.addColorStop(0, mood.color);
+            orbGradient.addColorStop(1, `${mood.color}00`);
+            ctx.fillStyle = orbGradient;
+            ctx.fill();
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Mood distribution chart
+            const moodChart = new Chart(document.getElementById('moodChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: moods.map(m => m.name),
+                    datasets: [{
+                        data: moods.map(() => Math.random() * 10),
+                        backgroundColor: moods.map(m => m.color),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
                 }
             });
+
+            // Weekly trend chart
+            const weeklyChart = new Chart(document.getElementById('weeklyChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Mood Score',
+                        data: [6, 7, 8, 5, 9, 7, 8],
+                        borderColor: '#ff9a3c',
+                        backgroundColor: '#ff9a3c20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 1, max: 10 }
+                    }
+                }
+            });
+
+            // Time of day chart
+            const timeChart = new Chart(document.getElementById('timeChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM', '12AM'],
+                    datasets: [{
+                        label: 'Average Mood',
+                        data: [7, 8, 6, 5, 7, 8, 6],
+                        backgroundColor: moods.map(m => m.color)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 1, max: 10 }
+                    }
+                }
+            });
+
+            window.charts = { moodChart, weeklyChart, timeChart };
+        }
+
+        function updateCharts() {
+            if (!window.charts) return;
             
-            // Update description
-            moodDescription.textContent = mood.description;
-            moodDescription.style.color = mood.color;
-            moodDescription.style.textShadow = `0 0 15px ${mood.color}80`;
+            // Update mood chart with actual data
+            const moodCounts = moods.map(mood => 
+                appState.moodHistory.filter(h => h.mood.id === mood.id).length
+            );
             
-            // Update experience area
-            experienceTitle.textContent = mood.title;
-            experienceTitle.style.color = mood.color;
-            
-            // Update visual
-            moodVisual.innerHTML = `<i class="${mood.visual}"></i>`;
-            moodVisual.style.color = mood.color;
-            moodVisual.style.filter = `drop-shadow(0 0 25px ${mood.color})`;
-            
-            // Update content
-            contentTitle.textContent = mood.title;
-            contentText.textContent = mood.content;
-            contentTip.textContent = mood.tip;
-            
-            // Update stats
-            updateStats();
-            
-            // Update background glow
-            document.documentElement.style.setProperty('--glow-color', `${mood.color}70`);
-            
-            // Update experience area background
-            experienceArea.style.background = mood.bgColor;
-            experienceArea.style.borderColor = `${mood.color}30`;
-            
-            // Update particles color
-            updateParticlesColor(mood.color);
-            
-            // Create visual effects
-            createVisualEffects(mood.visualEffect, mood.color);
-            
-            // Animate the transition
-            experienceArea.style.transform = 'translateY(-15px) scale(0.98)';
-            setTimeout(() => {
-                experienceArea.style.transform = 'translateY(0) scale(1)';
-            }, 400);
-            
-            // Increment mood match count
-            if (!fromInput) {
-                moodMatchCount++;
-                updateStats();
+            window.charts.moodChart.data.datasets[0].data = moodCounts;
+            window.charts.moodChart.update();
+        }
+
+        // Voice recognition
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                window.recognition = new webkitSpeechRecognition();
+                window.recognition.continuous = false;
+                window.recognition.interimResults = false;
+                
+                window.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('moodText').value = transcript;
+                    analyzeTextMood();
+                };
+                
+                window.recognition.onerror = (event) => {
+                    showNotification('Voice recognition error: ' + event.error, 'error');
+                };
             }
         }
 
-        // Add mood to history
-        function addToHistory(mood, fromInput = false) {
-            const historyItem = {
-                mood: mood,
-                timestamp: new Date(),
-                fromInput: fromInput
+        function toggleRecording() {
+            if (!window.recognition) {
+                showNotification('Voice recognition not supported in your browser', 'warning');
+                return;
+            }
+            
+            const btn = document.getElementById('startRecording');
+            if (btn.textContent.includes('Start')) {
+                window.recognition.start();
+                btn.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+                showNotification('Listening... Speak now!', 'info');
+            } else {
+                window.recognition.stop();
+                btn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+            }
+        }
+
+        // Journal functionality
+        function saveJournalEntry() {
+            const text = document.getElementById('journalEntry').value;
+            if (!text.trim()) {
+                showNotification('Please write something in your journal', 'warning');
+                return;
+            }
+            
+            const entry = {
+                text: text,
+                mood: appState.currentMood,
+                timestamp: new Date().toISOString()
             };
             
-            moodHistory.unshift(historyItem);
+            appState.journalEntries.push(entry);
+            saveAppState();
             
-            // Keep only last 10 items
-            if (moodHistory.length > 10) {
-                moodHistory = moodHistory.slice(0, 10);
+            document.getElementById('journalEntry').value = '';
+            showNotification('Journal entry saved!', 'success');
+            
+            // Check achievement
+            if (appState.journalEntries.length >= 5) {
+                unlockAchievement('journal_5');
             }
-            
-            updateHistoryDisplay();
         }
 
-        // Update history display
-        function updateHistoryDisplay() {
-            historyList.innerHTML = '';
+        // Achievements system
+        function updateAchievementsDisplay() {
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = '';
             
-            moodHistory.forEach((item, index) => {
-                const timeAgo = getTimeAgo(item.timestamp);
-                const historyElement = document.createElement('div');
-                historyElement.className = 'history-item';
-                historyElement.innerHTML = `
-                    <div class="history-mood" style="color: ${item.mood.color}">
-                        <i class="${item.mood.icon}"></i>
-                    </div>
-                    <div class="history-name">${item.mood.name}</div>
-                    <div class="history-time">${timeAgo}</div>
-                    ${item.fromInput ? '<div class="history-time" style="color: #06d6a0; margin-top: 5px;"><i class="fas fa-keyboard"></i> Custom</div>' : ''}
+            achievements.forEach(achievement => {
+                const card = document.createElement('div');
+                card.className = `achievement-card ${achievement.unlocked ? 'unlocked' : ''}`;
+                card.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <h4>${achievement.name}</h4>
+                    <p style="font-size: 0.8rem; opacity: 0.8;">${achievement.desc}</p>
+                    ${achievement.unlocked ? '<small style="color: #ffd166;">✓ Unlocked</small>' : '<small style="opacity: 0.5;">Locked</small>'}
                 `;
-                
-                historyElement.addEventListener('click', () => selectMood(item.mood.id, item.fromInput));
-                
-                historyList.appendChild(historyElement);
+                grid.appendChild(card);
             });
         }
 
-        // Get time ago string
-        function getTimeAgo(timestamp) {
+        function checkAchievements() {
             const now = new Date();
-            const diffMs = now - timestamp;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
+            const hour = now.getHours();
             
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} min ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-        }
-
-        // Update statistics
-        function updateStats() {
-            const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
+            // Check for night owl
+            if (hour >= 22 && !achievements.find(a => a.id === 'night_owl').unlocked) {
+                unlockAchievement('night_owl');
+            }
             
-            moodIntensity.textContent = `${intensityLevel * 20}%`;
-            moodDuration.textContent = `${sessionDuration} min`;
-            moodMatches.textContent = moodMatchCount;
+            // Check for morning person
+            if (hour < 8 && !achievements.find(a => a.id === 'morning_person').unlocked) {
+                unlockAchievement('morning_person');
+            }
             
-            // Animate stats
-            moodIntensity.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                moodIntensity.style.transform = 'scale(1)';
-            }, 300);
-        }
-
-        // Create particles
-        function createParticles() {
-            // Clear existing particles
-            particlesContainer.innerHTML = '';
-            particles = [];
-            
-            // Create new particles
-            for (let i = 0; i < 80; i++) {
-                createParticle();
+            // Check if all moods tried
+            const triedMoods = new Set(appState.moodHistory.map(h => h.mood.id));
+            if (triedMoods.size >= moods.length && !achievements.find(a => a.id === 'all_moods').unlocked) {
+                unlockAchievement('all_moods');
             }
         }
 
-        // Create a single particle
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            
-            // Random size
-            const size = Math.random() * 12 + 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            // Random position
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.top = `${Math.random() * 100}%`;
-            
-            // Random animation delay
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-            
-            particlesContainer.appendChild(particle);
-            
-            // Store particle reference
-            particles.push({
-                element: particle,
-                x: Math.random() * 100,
-                y: Math.random() * 100,
-                speedX: (Math.random() - 0.5) * 0.3,
-                speedY: (Math.random() - 0.5) * 0.3,
-                size: size,
-                opacity: Math.random() * 0.6 + 0.1,
-                color: '#ffd166'
-            });
-        }
-
-        // Animate particles
-        function animateParticles() {
-            particles.forEach(p => {
-                // Update position
-                p.x += p.speedX;
-                p.y += p.speedY;
-                
-                // Bounce off edges
-                if (p.x > 100 || p.x < 0) p.speedX *= -1;
-                if (p.y > 100 || p.y < 0) p.speedY *= -1;
-                
-                // Keep within bounds
-                p.x = Math.max(0, Math.min(100, p.x));
-                p.y = Math.max(0, Math.min(100, p.y));
-                
-                // Apply position
-                p.element.style.left = `${p.x}%`;
-                p.element.style.top = `${p.y}%`;
-                
-                // Pulsing opacity
-                p.opacity = 0.1 + 0.5 * (0.5 + 0.5 * Math.sin(Date.now() * 0.001 + p.x * 0.1));
-                p.element.style.opacity = p.opacity;
-                
-                // Apply color
-                p.element.style.backgroundColor = p.color;
-            });
-            
-            requestAnimationFrame(animateParticles);
-        }
-
-        // Update particles color
-        function updateParticlesColor(color) {
-            particles.forEach(p => {
-                p.color = color;
-            });
-        }
-
-        // Create visual effects based on mood
-        function createVisualEffects(effectType, color) {
-            // Clear existing effects
-            visualEffects.innerHTML = '';
-            if (visualEffectInterval) clearInterval(visualEffectInterval);
-            
-            const containerWidth = visualEffects.clientWidth;
-            const containerHeight = visualEffects.clientHeight;
-            
-            switch(effectType) {
-                case 'sparkle':
-                    // Create sparkle effect
-                    visualEffectInterval = setInterval(() => {
-                        const sparkle = document.createElement('div');
-                        sparkle.className = 'visual-particle';
-                        sparkle.style.width = `${Math.random() * 15 + 5}px`;
-                        sparkle.style.height = sparkle.style.width;
-                        sparkle.style.backgroundColor = color;
-                        sparkle.style.left = `${Math.random() * 100}%`;
-                        sparkle.style.top = `${Math.random() * 100}%`;
-                        sparkle.style.opacity = '0';
-                        sparkle.style.animation = 'sparkle 1s ease-in-out';
-                        visualEffects.appendChild(sparkle);
-                        
-                        // Remove sparkle after animation
-                        setTimeout(() => {
-                            if (sparkle.parentNode) {
-                                sparkle.parentNode.removeChild(sparkle);
-                            }
-                        }, 1000);
-                    }, 200);
-                    break;
-                    
-                case 'ripple':
-                    // Create ripple effect
-                    visualEffectInterval = setInterval(() => {
-                        const ripple = document.createElement('div');
-                        ripple.className = 'visual-particle';
-                        ripple.style.width = '10px';
-                        ripple.style.height = '10px';
-                        ripple.style.backgroundColor = color;
-                        ripple.style.left = '50%';
-                        ripple.style.top = '50%';
-                        ripple.style.transform = 'translate(-50%, -50%)';
-                        ripple.style.borderRadius = '50%';
-                        ripple.style.opacity = '0.7';
-                        ripple.style.animation = 'ripple 2s ease-out infinite';
-                        visualEffects.appendChild(ripple);
-                        
-                        // Remove ripple after animation
-                        setTimeout(() => {
-                            if (ripple.parentNode) {
-                                ripple.parentNode.removeChild(ripple);
-                            }
-                        }, 2000);
-                    }, 1000);
-                    break;
-                    
-                case 'pulse':
-                    // Create pulse effect
-                    const pulse = document.createElement('div');
-                    pulse.className = 'visual-particle';
-                    pulse.style.width = '100%';
-                    pulse.style.height = '100%';
-                    pulse.style.backgroundColor = color;
-                    pulse.style.opacity = '0.1';
-                    pulse.style.borderRadius = '20px';
-                    pulse.style.animation = 'pulse 3s ease-in-out infinite';
-                    visualEffects.appendChild(pulse);
-                    break;
-                    
-                case 'float':
-                    // Create floating particles
-                    for (let i = 0; i < 15; i++) {
-                        const floatParticle = document.createElement('div');
-                        floatParticle.className = 'visual-particle';
-                        const size = Math.random() * 20 + 10;
-                        floatParticle.style.width = `${size}px`;
-                        floatParticle.style.height = `${size}px`;
-                        floatParticle.style.backgroundColor = color;
-                        floatParticle.style.left = `${Math.random() * 100}%`;
-                        floatParticle.style.top = `${Math.random() * 100}%`;
-                        floatParticle.style.opacity = '0.3';
-                        floatParticle.style.borderRadius = '50%';
-                        
-                        // Random float animation
-                        const duration = Math.random() * 10 + 10;
-                        floatParticle.style.animation = `float ${duration}s infinite ease-in-out`;
-                        
-                        visualEffects.appendChild(floatParticle);
-                    }
-                    break;
-                    
-                case 'orbit':
-                    // Create orbiting particles
-                    const centerX = containerWidth / 2;
-                    const centerY = containerHeight / 2;
-                    
-                    for (let i = 0; i < 8; i++) {
-                        const orbitParticle = document.createElement('div');
-                        orbitParticle.className = 'visual-particle';
-                        orbitParticle.style.width = '15px';
-                        orbitParticle.style.height = '15px';
-                        orbitParticle.style.backgroundColor = color;
-                        orbitParticle.style.opacity = '0.5';
-                        orbitParticle.style.borderRadius = '50%';
-                        visualEffects.appendChild(orbitParticle);
-                        
-                        // Animate orbit
-                        const radius = 80 + i * 20;
-                        const speed = 0.002 + i * 0.0005;
-                        let angle = i * (Math.PI / 4);
-                        
-                        function updateOrbit() {
-                            const x = centerX + radius * Math.cos(angle) - 7.5;
-                            const y = centerY + radius * Math.sin(angle) - 7.5;
-                            
-                            orbitParticle.style.left = `${x}px`;
-                            orbitParticle.style.top = `${y}px`;
-                            
-                            angle += speed;
-                            requestAnimationFrame(updateOrbit);
-                        }
-                        
-                        updateOrbit();
-                    }
-                    break;
-                    
-                case 'grow':
-                    // Create growing particles
-                    for (let i = 0; i < 10; i++) {
-                        const growParticle = document.createElement('div');
-                        growParticle.className = 'visual-particle';
-                        growParticle.style.width = '5px';
-                        growParticle.style.height = '5px';
-                        growParticle.style.backgroundColor = color;
-                        growParticle.style.left = `${Math.random() * 100}%`;
-                        growParticle.style.top = `${Math.random() * 100}%`;
-                        growParticle.style.opacity = '0';
-                        growParticle.style.borderRadius = '50%';
-                        
-                        // Grow animation
-                        growParticle.animate([
-                            { transform: 'scale(0)', opacity: 0 },
-                            { transform: 'scale(1.5)', opacity: 0.7 },
-                            { transform: 'scale(1)', opacity: 0.3 }
-                        ], {
-                            duration: 2000 + Math.random() * 3000,
-                            iterations: Infinity,
-                            delay: i * 300
-                        });
-                        
-                        visualEffects.appendChild(growParticle);
-                    }
-                    break;
+        function unlockAchievement(achievementId) {
+            const achievement = achievements.find(a => a.id === achievementId);
+            if (achievement && !achievement.unlocked) {
+                achievement.unlocked = true;
+                updateAchievementsDisplay();
+                showNotification(`🎉 Achievement Unlocked: ${achievement.name}!`, 'success');
+                saveAppState();
             }
         }
 
-        // Show music suggestion
-        function showMusicSuggestion() {
-            if (!currentMood) {
-                alert('Please select a mood first!');
-                return;
-            }
+        // Streak system
+        function updateStreak() {
+            const now = new Date();
+            const today = now.toDateString();
             
-            // Create a nicer alert with emoji
-            const musicMessage = `🎵 For your ${currentMood.name.toLowerCase()} mood, we recommend:\n\n"${currentMood.music}"\n\nTry streaming services for "${currentMood.name} mood" playlists!`;
-            showNotification(musicMessage, currentMood.color);
-        }
-
-        // Show random quote
-        function showRandomQuote() {
-            if (!currentMood) {
-                alert('Please select a mood first!');
-                return;
-            }
-            
-            const randomQuote = currentMood.quotes[Math.floor(Math.random() * currentMood.quotes.length)];
-            const quoteMessage = `"${randomQuote}"\n\n- ${currentMood.name} Mood`;
-            showNotification(quoteMessage, currentMood.color);
-        }
-
-        // Show mood activity
-        function showMoodActivity() {
-            if (!currentMood) {
-                alert('Please select a mood first!');
-                return;
-            }
-            
-            const randomActivity = currentMood.activities[Math.floor(Math.random() * currentMood.activities.length)];
-            const activityMessage = `🎯 For your ${currentMood.name.toLowerCase()} mood, try this activity:\n\n${randomActivity}`;
-            showNotification(activityMessage, currentMood.color);
-        }
-
-        // Visualize mood (enhanced visualization)
-        function visualizeMood() {
-            if (!currentMood) {
-                alert('Please select a mood first!');
-                return;
-            }
-            
-            // Intensify the current visualization
-            intensityLevel = Math.min(5, intensityLevel + 1);
-            
-            // Update stats
-            updateStats();
-            
-            // Create an extra visualization burst
-            const burstContainer = document.createElement('div');
-            burstContainer.style.position = 'absolute';
-            burstContainer.style.top = '0';
-            burstContainer.style.left = '0';
-            burstContainer.style.width = '100%';
-            burstContainer.style.height = '100%';
-            burstContainer.style.pointerEvents = 'none';
-            burstContainer.style.zIndex = '5';
-            
-            for (let i = 0; i < 30; i++) {
-                const burstParticle = document.createElement('div');
-                burstParticle.style.position = 'absolute';
-                burstParticle.style.width = `${Math.random() * 20 + 5}px`;
-                burstParticle.style.height = burstParticle.style.width;
-                burstParticle.style.backgroundColor = currentMood.color;
-                burstParticle.style.borderRadius = '50%';
-                burstParticle.style.left = '50%';
-                burstParticle.style.top = '50%';
-                burstParticle.style.opacity = '0.7';
-                
-                // Random direction and distance
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 100 + Math.random() * 150;
-                const duration = 800 + Math.random() * 400;
-                
-                // Animate burst
-                burstParticle.animate([
-                    { transform: 'translate(-50%, -50%) scale(0)', opacity: 0.7 },
-                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(1)`, opacity: 0 }
-                ], {
-                    duration: duration,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
-                });
-                
-                burstContainer.appendChild(burstParticle);
-                
-                // Remove particle after animation
-                setTimeout(() => {
-                    if (burstParticle.parentNode) {
-                        burstParticle.parentNode.removeChild(burstParticle);
-                    }
-                }, duration);
-            }
-            
-            experienceArea.appendChild(burstContainer);
-            
-            // Remove container after animation completes
-            setTimeout(() => {
-                if (burstContainer.parentNode) {
-                    burstContainer.parentNode.removeChild(burstContainer);
-                }
-            }, 1200);
-            
-            showNotification(`✨ Enhanced ${currentMood.name} visualization activated!`, currentMood.color);
-        }
-
-        // Share mood
-        function shareMood() {
-            if (!currentMood) {
-                alert('Please select a mood first!');
-                return;
-            }
-            
-            const shareText = `I'm experiencing a ${currentMood.name.toLowerCase()} mood on MoodScape Pro!`;
-            const shareUrl = window.location.href;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'My MoodScape Experience',
-                    text: shareText,
-                    url: shareUrl
-                });
+            if (!appState.lastCheckIn) {
+                appState.streak = 1;
             } else {
-                // Fallback for browsers that don't support Web Share API
-                const shareMessage = `${shareText}\n\nCheck it out: ${shareUrl}`;
-                navigator.clipboard.writeText(shareMessage).then(() => {
-                    showNotification('📋 Mood copied to clipboard! Share it with your friends.', currentMood.color);
-                });
+                const lastDate = new Date(appState.lastCheckIn);
+                const lastDay = lastDate.toDateString();
+                
+                if (today === lastDay) {
+                    // Already checked in today
+                    return;
+                } else if (isYesterday(lastDate, now)) {
+                    // Consecutive day
+                    appState.streak++;
+                } else {
+                    // Streak broken
+                    appState.streak = 1;
+                }
             }
+            
+            appState.lastCheckIn = now.toISOString();
+            
+            // Update display
+            document.getElementById('streakCount').textContent = `${appState.streak} Day Streak`;
+            
+            // Check streak achievements
+            if (appState.streak >= 3) {
+                unlockAchievement('streak_3');
+            }
+            if (appState.streak >= 7) {
+                unlockAchievement('streak_7');
+            }
+            
+            saveAppState();
         }
 
-        // Reset experience
-        function resetExperience() {
-            currentMood = null;
-            intensityLevel = 3;
+        function isYesterday(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.abs(date1 - date2) <= oneDay;
+        }
+
+        // Timeline
+        function updateTimeline() {
+            const timeline = document.getElementById('moodTimeline');
+            timeline.innerHTML = '';
             
-            // Reset UI
-            document.querySelectorAll('.mood-option').forEach(option => {
-                option.classList.remove('active');
+            // Show last 7 days
+            const recentHistory = appState.moodHistory.slice(-7);
+            
+            recentHistory.forEach(entry => {
+                const date = new Date(entry.timestamp);
+                const item = document.createElement('div');
+                item.className = 'timeline-item';
+                item.style.setProperty('--mood-color', entry.mood.color);
+                item.innerHTML = `
+                    <div style="color: ${entry.mood.color}; font-size: 1.5rem;">
+                        <i class="${entry.mood.icon}"></i>
+                    </div>
+                    <div style="font-weight: 600; margin: 5px 0;">${entry.mood.name}</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">
+                        ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </div>
+                `;
+                timeline.appendChild(item);
             });
-            
-            moodDescription.textContent = 'Select a mood or describe your feelings to begin your personalized experience';
-            moodDescription.style.color = '';
-            moodDescription.style.textShadow = '';
-            
-            experienceTitle.textContent = 'Your Mood Experience Awaits';
-            experienceTitle.style.color = '';
-            
-            moodVisual.innerHTML = '<i class="fas fa-smile"></i>';
-            moodVisual.style.color = '';
-            moodVisual.style.filter = '';
-            
-            contentTitle.textContent = 'Discover Your Moodscape';
-            contentText.textContent = 'This advanced interactive space adapts to reflect your current emotional state. Choose from predefined moods or describe your own to transform the visuals, colors, sounds, and content to match your feelings.';
-            contentTip.textContent = 'Each mood offers a unique combination of dynamic visual effects, adaptive color schemes, and carefully curated content designed to enhance your emotional experience.';
-            
-            // Reset stats
-            moodMatchCount = 0;
-            updateStats();
-            
-            // Reset background
-            document.documentElement.style.setProperty('--glow-color', 'rgba(255, 209, 102, 0.7)');
-            experienceArea.style.background = 'var(--card-bg)';
-            experienceArea.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-            
-            // Reset particles color
-            updateParticlesColor('var(--soft-yellow)');
-            
-            // Clear visual effects
-            visualEffects.innerHTML = '';
-            if (visualEffectInterval) clearInterval(visualEffectInterval);
-            
-            // Clear input
-            customMoodInput.value = '';
-            
-            showNotification('🔄 Experience reset! Select a new mood to begin again.', '#ff9a3c');
         }
 
-        // Show notification
-        function showNotification(message, color) {
-            // Remove existing notification
-            const existingNotification = document.querySelector('.notification');
-            if (existingNotification) {
-                existingNotification.remove();
+        // Gratitude practice
+        function addGratitudeItem() {
+            const input = document.getElementById('gratitudeInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                showNotification('Please enter something you\'re grateful for', 'warning');
+                return;
             }
             
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed;
-                top: 30px;
-                right: 30px;
-                background: ${color}20;
-                color: white;
-                padding: 18px 25px;
-                border-radius: 15px;
-                backdrop-filter: blur(10px);
-                border: 1px solid ${color}40;
-                max-width: 350px;
-                z-index: 1000;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                transform: translateX(100px);
-                opacity: 0;
-                transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                font-family: 'Poppins', sans-serif;
-                font-weight: 500;
-                line-height: 1.5;
-                white-space: pre-line;
+            const itemsDiv = document.getElementById('gratitudeItems');
+            const item = document.createElement('div');
+            item.style.cssText = `
+                background: rgba(255, 209, 102, 0.1);
+                border-radius: 8px;
+                padding: 10px;
+                margin: 5px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+            item.innerHTML = `
+                <span>${text}</span>
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: #ff6b6b; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
             
-            document.body.appendChild(notification);
+            itemsDiv.appendChild(item);
+            input.value = '';
             
-            // Animate in
+            // Add to local storage
+            const gratitudes = JSON.parse(localStorage.getItem('gratitudes') || '[]');
+            gratitudes.push({ text, date: new Date().toISOString() });
+            localStorage.setItem('gratitudes', JSON.stringify(gratitudes));
+        }
+
+        // Mindful minute timer
+        function startMindfulTimer() {
+            const timerEl = document.getElementById('mindfulTimer');
+            const btn = document.getElementById('startMindful');
+            let timeLeft = 60;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-pause"></i> Meditating...';
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-play"></i> Start 60s';
+                    timerEl.textContent = '60';
+                    showNotification('🎉 Mindful minute complete! Well done!', 'success');
+                    
+                    // Track meditation sessions
+                    const sessions = parseInt(localStorage.getItem('meditationSessions') || '0') + 1;
+                    localStorage.setItem('meditationSessions', sessions.toString());
+                    
+                    if (sessions >= 5) {
+                        unlockAchievement('meditator');
+                    }
+                }
+            }, 1000);
+        }
+
+        // Sound player
+        function playSound(soundType) {
+            // In a real app, you would play actual audio files
+            showNotification(`Playing ${sounds[soundType].name} sounds...`, 'info');
+            
+            // Update active sound button
+            document.querySelectorAll('.sound-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.sound-btn[data-sound="${soundType}"]`).classList.add('active');
+        }
+
+        // AI Coach messages
+        function updateCoachMessage(message) {
+            document.getElementById('coachMessage').textContent = message;
+        }
+
+        function generateAIResponse(moodId, text) {
+            const responses = {
+                joyful: [
+                    "That's wonderful to hear! Your positive energy is contagious.",
+                    "Joy is such a beautiful state to be in. What's making you feel this way?",
+                    "Happiness looks great on you! Want to explore activities to maintain this mood?"
+                ],
+                calm: [
+                    "Peace and tranquility - what a beautiful state to be in.",
+                    "I sense a deep calm in you. This is perfect for reflection.",
+                    "Your calm energy creates space for clarity and insight."
+                ],
+                reflective: [
+                    "Deep thoughts can lead to profound insights. Want to journal about this?",
+                    "Reflection is the first step toward understanding. How can I help?",
+                    "This contemplative state is perfect for personal growth."
+                ]
+            };
+            
+            const moodResponses = responses[moodId] || [
+                "Thank you for sharing. How can I support you today?",
+                "I'm here to listen. Tell me more about how you're feeling."
+            ];
+            
+            return moodResponses[Math.floor(Math.random() * moodResponses.length)];
+        }
+
+        // Data export
+        function exportAllData() {
+            const data = {
+                appState,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `moodscape-data-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully!', 'success');
+        }
+
+        // Reset all data
+        function resetAllData() {
+            if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const colors = {
+                info: '#118ab2',
+                success: '#06d6a0',
+                warning: '#ffd166',
+                error: '#ef476f'
+            };
+            
+            notification.style.borderLeftColor = colors[type] || colors.info;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 10px;">
+                    <div style="font-size: 1.2rem;">
+                        ${type === 'success' ? '🎉' : type === 'error' ? '⚠️' : '💡'}
+                    </div>
+                    <div style="flex: 1;">${message}</div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; color: var(--text-dim); cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Show animation
             setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-                notification.style.opacity = '1';
+                notification.classList.add('show');
             }, 10);
             
-            // Remove after 5 seconds
+            // Auto remove after 5 seconds
             setTimeout(() => {
-                notification.style.transform = 'translateX(100px)';
-                notification.style.opacity = '0';
+                notification.classList.remove('show');
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
-                }, 400);
+                }, 500);
             }, 5000);
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initMoodSelector();
-            createParticles();
-            animateParticles();
-            
-            // Select first mood by default
-            selectMood('joyful');
-            
-            // Add some initial history
-            setTimeout(() => {
-                addToHistory(moods.find(m => m.id === 'joyful'), false);
-                addToHistory(moods.find(m => m.id === 'calm'), false);
-            }, 500);
-        });
+        // Add missing functions
+        function updateJournalDisplay() {
+            // Implementation for displaying journal entries
+        }
 
-        // Event Listeners
-        analyzeMoodBtn.addEventListener('click', () => {
-            const inputText = customMoodInput.value.trim();
-            if (!inputText) {
-                showNotification('Please describe how you\'re feeling!', '#ef476f');
-                return;
+        // Add more interactive features...
+        
+        // Initialize background particles
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: ${Math.random() * 5 + 2}px;
+                    height: ${Math.random() * 5 + 2}px;
+                    background: ${moods[Math.floor(Math.random() * moods.length)].color};
+                    border-radius: 50%;
+                    opacity: ${Math.random() * 0.3 + 0.1};
+                    z-index: -1;
+                    top: ${Math.random() * 100}vh;
+                    left: ${Math.random() * 100}vw;
+                `;
+                container.appendChild(particle);
+                
+                // Animate particle
+                animateParticle(particle);
+            }
+        }
+
+        function animateParticle(element) {
+            let x = parseFloat(element.style.left);
+            let y = parseFloat(element.style.top);
+            let dx = (Math.random() - 0.5) * 0.3;
+            let dy = (Math.random() - 0.5) * 0.3;
+            
+            function move() {
+                x += dx;
+                y += dy;
+                
+                // Bounce off edges
+                if (x < 0 || x > 100) dx *= -1;
+                if (y < 0 || y > 100) dy *= -1;
+                
+                element.style.left = `${x}vw`;
+                element.style.top = `${y}vh`;
+                
+                requestAnimationFrame(move);
             }
             
-            const analyzedMood = analyzeMoodFromText(inputText);
-            if (analyzedMood) {
-                selectMood(analyzedMood, true);
-                showNotification(`✅ Mood detected: ${analyzedMood}\n\nBased on your input: "${inputText}"`, '#06d6a0');
-            }
-        });
+            move();
+        }
 
-        customMoodInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                analyzeMoodBtn.click();
-            }
-        });
+        // Initialize particles on load
+        initParticles();
 
-        musicBtn.addEventListener('click', showMusicSuggestion);
-        quoteBtn.addEventListener('click', showRandomQuote);
-        activityBtn.addEventListener('click', showMoodActivity);
-        visualizeBtn.addEventListener('click', visualizeMood);
-        shareBtn.addEventListener('click', shareMood);
-        resetBtn.addEventListener('click', resetExperience);
+        // Periodic coach updates
+        setInterval(() => {
+            if (appState.currentMood) {
+                const messages = [
+                    "How is your current mood evolving?",
+                    "Would you like to try a quick mindfulness exercise?",
+                    "I notice you've been checking in regularly. Great consistency!",
+                    "Your emotional awareness is growing with each check-in."
+                ];
+                
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                updateCoachMessage(randomMessage);
+            }
+        }, 30000); // Every 30 seconds
+
+        // Daily reminder (simulated)
+        setInterval(() => {
+            const now = new Date();
+            const hours = now.getHours();
+            
+            // Only show during reasonable hours
+            if (hours >= 9 && hours <= 21) {
+                const lastCheckIn = appState.lastCheckIn ? new Date(appState.lastCheckIn) : null;
+                const today = now.toDateString();
+                
+                if (!lastCheckIn || lastCheckIn.toDateString() !== today) {
+                    showNotification('💭 Remember to check in with your mood today!', 'info');
+                }
+            }
+        }, 3600000); // Check every hour
+
+        // Background gradient animation
+        let gradientAngle = 0;
+        setInterval(() => {
+            gradientAngle = (gradientAngle + 0.1) % 360;
+            document.body.style.background = `linear-gradient(${gradientAngle}deg, #0a0a0a, #1a1a2e, #16213e, #0f3460)`;
+        }, 50);
+
     </script>
 </body>
 </html>
